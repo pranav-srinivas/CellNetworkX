@@ -1,0 +1,27 @@
+<html>
+<meta charset="utf-8">
+<body>
+<!DOCTYPE html>
+<meta charset="utf-8">
+<body>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script>
+var width = 960,
+    height = 600;
+
+var n = 2; //Number of circles
+
+var bodySelection = d3.select("body");
+
+var svgSelection = bodySelection.append("svg")
+	.attr("width", 50)
+	.attr("height", 50);
+
+var circleSelection = svgSelection.append("circle")
+	.attr("cx", 25)
+	.attr("cy", 25)
+	.attr("r", 25)
+	.style("fill", "purple");
+</script>
+</body>
+</html>

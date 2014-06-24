@@ -1,4 +1,4 @@
 EnvisionPPI
 ===========
 
-A project to visualize ppi's.
+A project to visualize interactions between Proteins.

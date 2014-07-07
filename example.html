@@ -42,8 +42,6 @@ force.on("tick", function(e) {
   	q.visit(collide(nodes[i]));
   }
 
-
-
   svg.selectAll("circle")
       .attr("cx", function(d) { return d.x; })
       .attr("cy", function(d) { return d.y; });
@@ -79,6 +77,3 @@ function collide(node) {
     return x1 > nx2 || x2 < nx1 || y1 > ny2 || y2 < ny1;
   };
 }
-</script>
-</body>
-</html>

@@ -7,7 +7,8 @@
 	</head>
 	<body>
 <script type="text/javascript" charset="utf-8">
-			var w = 960, h = 600;
+
+    var w = 960, h = 600;
 
 			var labelDistance = 0;
 
@@ -65,7 +66,9 @@
 
 			force.start();
 
-			var force2 = d3.layout.force()
+
+
+    var force2 = d3.layout.force()
                         .nodes(labelAnchors)
                         .links(labelAnchorLinks)
                         .gravity(0)
@@ -75,6 +78,8 @@
                         .size([w, h]);
 
 			force2.start();
+
+
 
 			var link = svg.selectAll(".link")
                        .data(links)
@@ -101,7 +106,6 @@
 			var anchorLink = svg.selectAll(".anchorLink")
                              .data(labelAnchorLinks)
 
-            //.enter().append("svg:line").attr("class", "anchorLink").style("stroke", "#999");
 
 			var anchorNode = svg.selectAll(".anchorNode")
                             .data(force2.nodes())
@@ -149,64 +153,6 @@
                   || linkedByIndex[b.index + "," + a.index]
                   || a.index == b.index;
             }
-
-            /**
-            function connections(a, list){
-                list.push(a);
-                for (var i = 0; i < nodes.length; i++){
-                    var b = nodes[i];
-                    if (isConnected(a, b)){
-                        list.push(b);
-                        connections(b, list);
-                    } else {
-                        return list;
-                    }
-                }
-            }
-            */
-
-            function containsObject(obj, list) {
-                var i;
-                for (i = 0; i < list.length; i++){
-                    if (list[i] === obj) {
-                        return true;
-                    }
-                }
-                return false;
-            }
-
-            function mouseover(opacity) {
-                var list = [];
-                return function(d) {
-                    node.style("stroke-opacity", function() {
-                        list = connections(d, list);
-                        thisOpacity = containsObject(d, list) ? 1 : opacity;
-                        this.setAttribute('fill-opacity', thisOpacity);
-                        return thisOpacity;
-                    });
-
-                    link.style("stroke-opacity", function(o) {
-                        return o.source === d || o.target === d ? 1: opacity;
-                    });
-
-                };
-            }
-
-            /**
-            function fade(opacity) {
-                return function(d) {
-                    node.style("stroke-opacity", function(o) {
-                        thisOpacity = isConnected(d, o) ? 1 : opacity;
-                        this.setAttribute('fill-opacity', thisOpacity);
-                        return thisOpacity;
-                    });
-
-                    link.style("stroke-opacity", function(o) {
-                        return o.source === d || o.target === d ? 1: opacity;
-                    });
-                };
-            }
-            */
 
             function fade(opacity) {
                 return function(d) {

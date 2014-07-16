@@ -91,7 +91,7 @@
                         .data(force.nodes())
                         .enter().append("g")
                         .attr("class", "node")
-                        .on("click", click)
+                        .on("click", fade(0))
                         .on("mouseover", fade(.1))
                         .on("mouseout",  fade(1));
 
@@ -207,18 +207,6 @@
                     });
                 }
 
-            }
-
-
-
-            function click() {
-                if (d3.event.defaultPrevented) return;
-
-
-                d3.select(this).select("circle").transition()
-                    .duration(750)
-                    .attr("r", 16)
-                    .style("fill", "lightsteelblue");
             }
 
 

@@ -1,0 +1,71 @@
+<!doctype HTML>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>Protein Transcription Factors and mRNA Levels</title>
+
+		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+		<style type="text/css">
+		</style>
+		<script type="text/javascript">
+	
+$(function () {
+	
+	Highcharts.setOptions({
+        colors: ['#26A8D4', '#90ed7d', '#191975']
+    });
+    $('#container').highcharts({
+
+	    chart: {
+	        type: 'bubble',
+	        zoomType: 'xy'
+	    },
+
+	    credits: {
+            enabled: false
+        },
+        legend: {
+        	floating: false
+        },
+
+	    title: {
+	    	text: 'Protein Transcription Factors and mRNA Levels'
+	    },
+	
+	    series: [{
+	    	name: "Protein 1",
+	        data: [[10,100,79],[20,74,60],[30,68,58],[40,79,56],[50,67,73],[65,58,42],[70,43,87],[80,39,40],[90,27,33],[100,2,31]]
+	    }, {
+	    	name: "Protein 2",
+	        data: [[5,15,8],[10,75,16],[15,54,12],[20,55,27],[25,25,35],[30,63,44],[35,33,56],[40,12,67],[45,67,87],[50,25,81]]
+	    }, {
+	    	name: "Protein 3",
+	        data: [[10,13,4],[20,12,15],[30,24,23],[40,30,36],[50,45,34],[60,56,45],[70,60,56],[80,78,75],[90,67,67],[100,77,82]]
+	    }],
+
+	    xAxis: {
+	    	title: {
+	    		text: "Time(seconds)"
+	    	},
+	    	min: 0
+	    },
+	    yAxis: {
+	    	title: {
+	    		text: "Protein Level(units)"
+	    	},
+	    	min: 0
+	    },
+	
+	});
+    
+});
+		</script>
+	</head>
+	<body>
+<script src="../../js/highcharts.js"></script>
+<script src="../../js/highcharts-more.js"></script>
+<script src="../../js/modules/exporting.js"></script>
+
+<div id="container" style="height: 400px; min-width: 310px; max-width: 600px; margin: 0 auto"></div>
+	</body>
+</html>

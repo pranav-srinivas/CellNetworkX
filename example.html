@@ -7,65 +7,67 @@
 	</head>
 	<body>
 <script type="text/javascript" charset="utf-8">
+    var graph = {
+          "nodes":[
+                {"name":"A","group":1},
+                {"name":"B","group":1},
+                {"name":"C","group":1},
+                {"name":"D","group":1},
+                {"name":"E","group":2},
+                {"name":"F","group":2},
+                {"name":"G","group":2},
+                {"name":"H","group":3},
+                {"name":"I","group":3},
+                {"name":"J","group":3},
+                {"name":"K","group":3},
+                {"name":"L","group":3}
+              ],
+          "links":[
+                {"source":0,"target":1,"value":5},
+                {"source":1,"target":2,"value":5},
+                {"source":2,"target":3,"value":5},
+                {"source":4,"target":5,"value":5},
+                {"source":5,"target":6,"value":5},
+                {"source":7,"target":8,"value":5},
+                {"source":8,"target":9,"value":5},
+                {"source":9,"target":10,"value":5},
+                {"source":10,"target":11,"value":5}
+              ]
+            };
     var w = 960, h = 600;
 
 			var labelDistance = 0;
 
 			var svg = d3.select("body").append("svg")
-            .attr("width", w)
-            .attr("height", h);
+                        .attr("width", w)
+                        .attr("height", h);
 
 			var nodes = [];
 			var labelAnchors = [];
 			var labelAnchorLinks = [];
 			var links = [];
 
-			for(var i = 0; i < 30; i++) {
-				var node = {
-					label : "protein " + i
-				};
+			graph.nodes.forEach(function(d){
+               nodes.push(d);
+               labelAnchors.push(d);
+            });
 
-				nodes.push(node);
-
-				labelAnchors.push({
-					node : node
-				});
-				labelAnchors.push({
-					node : node
-				});
-			};
-
-			for(var i = 0; i < nodes.length; i++) {
-				for(var j = 0; j < i; j++) {
-					if(Math.random() > .95)
-						links.push({
-							source : i,
-							target : j,
-							weight : Math.random()
-						});
-				}
-
-				labelAnchorLinks.push({
-					source : i * 2,
-					target : i * 2 + 1,
-					weight : 1
-				});
-			};
+    graph.links.forEach(function(d){
+        links.push(d);
+        labelAnchorLinks.push(d);
+    });
 
 			var force = d3.layout.force()
                         .size([w, h])
                         .nodes(nodes)
                         .links(links).gravity(1)
-                        .linkDistance(50)
-                        .charge(-3000)
+                        .linkDistance(30)
+                        .charge(-120)
                         .linkStrength(function(x) {
 				            return x.weight * 10
 			            });
 
-
 			force.start();
-
-
 
     var force2 = d3.layout.force()
                         .nodes(labelAnchors)
@@ -95,7 +97,7 @@
                         .on("mouseout",  fade(1));
 
 			node.append("circle")
-                .attr("r", 13)
+                .attr("r", 50)
                 .style("fill", "#555")
                 .style("stroke", "#FFF")
                 .style("stroke-width", 3)
@@ -208,7 +210,6 @@
 
             }
 
-
 			force.on("tick", function() {
 
 				force2.start();
@@ -232,7 +233,6 @@
 						var shiftY = 5;
 						this.childNodes[1].setAttribute("transform", "translate(" + shiftX + "," + shiftY + ")");
 					}
-
 				});
 
 				anchorNode.call(updateNode);

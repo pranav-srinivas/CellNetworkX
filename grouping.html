@@ -35,9 +35,7 @@ var graph = {
   ]
 };
 var width = 960,
-    height = 500;
-
-var color = d3.scale.category20();
+    height = 600;
 
 var force = d3.layout.force()
     .charge(-120)
@@ -48,7 +46,7 @@ var svg = d3.select("body").append("svg")
     .attr("width", width)
     .attr("height", height);
 
-var drawGraph = function(graph) {
+
   force
       .nodes(graph.nodes)
       .links(graph.links)
@@ -60,19 +58,23 @@ var drawGraph = function(graph) {
       .attr("class", "link")
       .style("stroke", "#CCC");
 
-  var gnodes = svg.selectAll('g.gnode')
-     .data(graph.nodes)
-     .enter()
-     .append('g')
-     .classed('gnode', true);
 
-  var node = gnodes.append("circle")
-      .attr("class", "node")
-      .attr("r", 5)
-      .style("fill", function(d) { return color(d.group); })
-      .call(force.drag);
+  var node = svg.selectAll(".node")
+                        .data(graph.nodes)
+                        .enter().append("g")
+                        .attr("class", "node")
+                        .on("click", fade(0))
+                        .on("mouseover", fade(.1))
+                        .on("mouseout",  fade(1));
 
-  var labels = gnodes.append("text")
+			node.append("circle")
+                .attr("r", 10)
+                .style("fill", "#555")
+                .style("stroke", "#FFF")
+                .style("stroke-width", 3)
+                .call(force.drag);
+
+  var labels = node.append("text")
       .text(function(d) { return d.name; });
 
   console.log(labels);
@@ -83,20 +85,16 @@ var drawGraph = function(graph) {
         .attr("x2", function(d) { return d.target.x; })
         .attr("y2", function(d) { return d.target.y; });
 
-    gnodes.attr("transform", function(d) {
+    node.attr("transform", function(d) {
         return 'translate(' + [d.x, d.y] + ')';
     });
 
 
 
   });
-};
 
-drawGraph(graph);
-
-/**
     var linkedByIndex = {};
-        links.forEach(function(d) {
+        graph.links.forEach(function(d) {
             linkedByIndex[d.source.index + "," + d.target.index] = 1;
         });
 
@@ -107,29 +105,29 @@ drawGraph(graph);
         }
 
     function fade(opacity) {
-        return function(d) {
-            var connected = [d];
-            node.each( function(o) {
-                if(isConnected(d, o)) {
-                    connected.push(o);
-                    node.each( function (q) {
-                        if(isConnected(o, q)) {
-                            connected.push(q);
-                            node.each(function(p) {
-                                if(isConnected(q, p)){
-                                    connected.push(p);
-                                    node.each(function(u){
-                                          if(isConnected(p, u)){
-                                               connected.push(u);
-                                               node.each(function(w){
-                                                    if(isConnected(u, w)){
-                                                        connected.push(w);
-                                                        node.each(function(e){
-                                                            if(isConnected(w, e)){
-                                                                connected.push(e);
-                                                                node.each(function(r){
-                                                                    if(isConnected(e, r)){
-                                                                        connected.push(r);
+                return function(d) {
+                    var connected = [d];
+                    node.each( function(o) {
+                        if(isConnected(d, o)) {
+                            connected.push(o);
+                            node.each( function (q) {
+                                if(isConnected(o, q)) {
+                                    connected.push(q);
+                                    node.each(function(p) {
+                                        if(isConnected(q, p)){
+                                            connected.push(p);
+                                            node.each(function(u){
+                                                if(isConnected(p, u)){
+                                                    connected.push(u);
+                                                    node.each(function(w){
+                                                        if(isConnected(u, w)){
+                                                            connected.push(w);
+                                                            node.each(function(e){
+                                                                if(isConnected(w, e)){
+                                                                    connected.push(e);
+                                                                    node.each(function(r){
+                                                                        if(isConnected(e, r)){
+                                                                            connected.push(r);
                                                                         }
                                                                     })
                                                                 }
@@ -170,7 +168,6 @@ drawGraph(graph);
                     .attr("r", 16)
                     .style("fill", "lightsteelblue");
             }
-*/
 		</script>
 	</body>
 </html>

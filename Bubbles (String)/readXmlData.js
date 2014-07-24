@@ -2,8 +2,39 @@
 $(document).ready(function()
 { 
    var label_val = 1;
-   readXmlCreateBubbels(label_val);
+   var id_value = 0;
+   var pro_name = 'A';
+   $("#selectedProteinsValue").val(id_value);
+   $("#selectedProteinsName").val(pro_name);
+   
+   readXmlCreateBubbels(label_val, id_value, pro_name);
 });
+
+function selectRespectProtines(id_value, pro_name)
+{
+   //$("#sliderShowDiv").show();
+   $("#selectedProteinsValue").val(id_value);
+   $("#selectedProteinsName").val(pro_name);
+   
+    // Reset SVG
+	$("#svcDiv").html('');
+	$("#svcDiv").append('');
+    
+    var id_value_hf = $.trim($("#selectedProteinsValue").val());
+    var pro_name_hf = $.trim($("#selectedProteinsName").val());
+    if( (id_value != '') && (pro_name!=''))
+    {
+      
+      var label_val = 1;
+      readXmlCreateBubbels(label_val, id_value_hf, pro_name_hf);  
+    }
+    else
+    {
+       var label_val = 1;
+       readXmlCreateBubbels(label_val, id_value, pro_name);   
+    }
+    
+}
 
 function destroExistSVC(slider_scroll_value)
 {
@@ -11,14 +42,63 @@ function destroExistSVC(slider_scroll_value)
 	$("#svcDiv").html('');
 	$("#svcDiv").append('');
     
-	readXmlCreateBubbels(slider_scroll_value);
+    var id_value = $.trim($("#selectedProteinsValue").val());
+    var pro_name = $.trim($("#selectedProteinsName").val());
+    readXmlCreateBubbels(slider_scroll_value, id_value, pro_name);
 }
 
-function readXmlCreateBubbels(label_val)
+function readXmlCreateBubbels(label_val, selectedProteinsIndex, proteinsRespectName)
 {
-       var xmlMainData = "<proteins><label1><proteinspart><name>A</name><value>1</value></proteinspart><proteinspart><name>B</name><value>3</value></proteinspart> <proteinspart><name>C</name><value>5</value></proteinspart> <proteinspart><name>D</name><value>4</value></proteinspart> </label1><label2><proteinspart><name>A</name><value>3</value></proteinspart><proteinspart><name>B</name><value>4</value></proteinspart> <proteinspart><name>C</name><value>1</value></proteinspart> <proteinspart><name>D</name><value>2</value></proteinspart> </label2><label3><proteinspart><name>A</name><value>2</value></proteinspart><proteinspart><name>B</name><value>1</value></proteinspart> <proteinspart><name>C</name><value>4</value></proteinspart><proteinspart><name>D</name><value>5</value></proteinspart> </label3><label4><proteinspart><name>A</name><value>4</value></proteinspart><proteinspart><name>B</name><value>5</value></proteinspart><proteinspart><name>C</name><value>2</value></proteinspart> <proteinspart><name>D</name><value>3</value></proteinspart></label4><label5><proteinspart><name>A</name><value>5</value></proteinspart><proteinspart><name>B</name><value>2</value></proteinspart> <proteinspart><name>C</name><value>4</value></proteinspart> <proteinspart><name>D</name><value>5</value></proteinspart></label5></proteins>";
-       //var xmlRssContent = "<rss version='2.0'>"+xmlMainData+"</rss>",xmlParsed = $.parseXML(xmlRssContent);
-       xmlParsed = $.parseXML(xmlMainData);
+    
+       //var proteinsRespectName = $.trim($("#selectedProteinsName").val());
+       var proteinsValueArray = [];
+       
+       var xmlMainData = '<proteins><label1><proteinspart><name proteins="A" >A</name><value proteins="A" >1</value></proteinspart><proteinspart><name proteins="B" >B</name><value proteins="B">3</value></proteinspart> <proteinspart><name proteins="C" >C</name><value proteins="C" >5</value></proteinspart> <proteinspart><name proteins="D" >D</name><value proteins="D" >4</value></proteinspart> </label1><label2><proteinspart><name proteins="A" >A</name><value proteins="A" >3</value></proteinspart><proteinspart><name proteins="B" >B</name><value proteins="B" >4</value></proteinspart> <proteinspart><name proteins="C" >C</name><value proteins="C" >1</value></proteinspart> <proteinspart><name proteins="D" >D</name><value proteins="D" >2</value></proteinspart> </label2><label3><proteinspart><name proteins="A" >A</name><value proteins="A" >2</value></proteinspart><proteinspart><name proteins="B" >B</name><value proteins="B" >1</value></proteinspart> <proteinspart><name proteins="C" >C</name><value proteins="C" >4</value></proteinspart><proteinspart><name proteins="D" >D</name><value proteins="D" >5</value></proteinspart> </label3><label4><proteinspart><name proteins="A" >A</name><value proteins="A" >4</value></proteinspart><proteinspart><name proteins="B" >B</name><value proteins="B" >5</value></proteinspart><proteinspart><name proteins="C" >C</name><value proteins="C" >2</value></proteinspart> <proteinspart><name proteins="D" >D</name><value proteins="D" >3</value></proteinspart></label4><label5><proteinspart><name proteins="A" >A</name><value proteins="A" >5</value></proteinspart><proteinspart><name proteins="B" >B</name><value proteins="B" >2</value></proteinspart> <proteinspart><name proteins="C" >C</name><value proteins="C" >4</value></proteinspart> <proteinspart><name proteins="D" >D</name><value proteins="D" >5</value></proteinspart></label5></proteins>',
+       xmlParsed = $.parseXML(xmlMainData),
+       $xml = $(xmlParsed);
+       
+       $($xml.find('value[proteins="' + proteinsRespectName + '"]')).each(function(p)
+       {
+          	proteins_value = $(this).text();
+            proteinsValueArray.push(proteins_value);
+            // console.log("Proteins Value = "+proteins_value);
+       });
+        
+        // Get unique element of proteins value array. 
+        var proteinsArrayUnique = proteinsValueArray.filter(function(itm,i,proteinsValueArray){
+            return i == proteinsValueArray.indexOf(itm);
+        });
+
+       //console.log("Proteins Origenal Array = "+proteinsValueArray);
+       //console.log("Proteins Unique Array = "+proteinsArrayUnique);
+       var proteinsArrayLength = (proteinsArrayUnique.length);
+      //  var shortProteinsArray = proteinsArrayUnique.sort(); 
+       var shortProteinsArray = proteinsArrayUnique;
+       /**
+           var proteins_min_val = shortProteinsArray[0];
+           var proteins_max_val_index = (proteinsArrayLength - 1);
+           var proteins_max_val = shortProteinsArray[proteins_max_val_index]
+       */
+       
+       var proteins_min_val = Math.min.apply(Math,shortProteinsArray); 
+       var proteins_max_val = Math.max.apply(Math,shortProteinsArray); 
+       
+       //console.log("Proteins "+proteinsRespectName+" Unique Array Min Value = "+proteins_min_val+", Max Value = "+proteins_max_val);
+       
+       $('.slider-bar').attr('min', proteins_min_val).attr('max', proteins_max_val).attr('value', proteins_min_val); // Assign Min and Max value to Dynamic slider.
+       if(proteinsArrayLength == 5){ var sliderDynamicMargin = 90;}
+       if(proteinsArrayLength == 4){ var sliderDynamicMargin = 120;}
+       else{var sliderDynamicMargin = 90;}
+      
+        var dynamicSlider = ''; // Create dynamic slider.
+        for(pl=0; pl<proteinsArrayLength; pl++)
+        {
+            dynamicSlider += '<span style="margin-right:'+sliderDynamicMargin+'px;margin-top: 20px;" id="range'+pl+'">'+shortProteinsArray[pl]+'</span>';
+        } 
+        
+        $("#appendDynamicSlide").html(dynamicSlider);
+        //console.log(dynamicSlider);
+
        var XmlToJsonData = []; // Define Json data array.
 
 		// Run the function for each proteinspart tag in the XML file
@@ -171,6 +251,26 @@ function readXmlCreateBubbels(label_val)
         
 		// calculate json data size.
 		var mainCount = Object.keys(parseMainJsonData.children).length
+
+		var respectiveDesign = '';
+		for(j=0;j<mainCount;j++)
+		{
+			var mainProteinName = parseMainJsonData.children[j].name;
+			var mainProteinValue = parseMainJsonData.children[j].size;
+			
+			if(mainProteinName != '') // For radio button to select proteins.
+			{
+                 //var selectedProteinsIndex  = $("#selectedProteinsValue").val();
+                 // console.log("Selected Index = "+selectedProteinsIndex);
+                 if(selectedProteinsIndex == j){ var selectProteinsStyle = 'checked = "checked"'; }
+                 else { var selectProteinsStyle = ''; }
+                 
+                 respectiveDesign += '<span style="display:inline;"><input type="radio" name="respectratioradio" id="respectratioradio'+j+'" '+selectProteinsStyle+' value="'+mainProteinName+'" onclick="selectRespectProtines('+j+',\''+mainProteinName+'\')">'+mainProteinName+'</span>&nbsp;&nbsp;&nbsp;';
+			}
+		}
+        
+		var completeRespectiveDesign = '<b><br/><br/>Select Proteins : </b><br/>'+respectiveDesign;
+		$("#respectProteinsShowDiv").html(completeRespectiveDesign);
 	
         /*
           Read JSON data and it will create nodes as well as details related to the nodes.

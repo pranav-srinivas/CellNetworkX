@@ -1,0 +1,229 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>Nitya's Example</title>
+		<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+	</head>
+	<body>
+<script type="text/javascript" charset="utf-8">
+var graph = {
+  "nodes":[
+      {"name":"praf","group":1,"color":"black"},
+    {"name":"pmek","group":1,"color":"black"},
+    {"name":"plcg","group":1,"color":"black"},
+    {"name":"PIP2","group":1,"color":"black"},
+    {"name":"PIP3","group":1,"color":"black"},
+    {"name":"p44/42","group":1,"color":"black"},
+    {"name":"pakts473","group":1,"color":"black"},
+    {"name":"PKA","group":1,"color":"black"},
+    {"name":"PKC","group":1,"color":"black"},
+    {"name":"P38","group":1,"color":"black"},
+    {"name":"pjnk","group":1,"color":"black"}
+  ],
+  "links":[
+    {"source":0,"target":1,"value":5},
+    {"source":1,"target":2,"value":5},
+    {"source":2,"target":3,"value":5},
+    {"source":3,"target":4,"value":5},
+    {"source":4,"target":5,"value":5},
+    {"source":5,"target":6,"value":5},
+    {"source":6,"target":7,"value":5},
+    {"source":7,"target":8,"value":5},
+    {"source":8,"target":9,"value":5},
+    {"source":9,"target":10,"value":5}
+  ]
+};
+var width = 960,
+    height = 600;
+
+var index = 0;
+
+var force = d3.layout.force()
+    .charge(-120)
+    .linkDistance(30)
+    .size([width, height]);
+
+var svg = d3.select("body").append("svg")
+    .attr("width", width)
+    .attr("height", height);
+
+
+  force
+      .nodes(graph.nodes)
+      .links(graph.links)
+      .start();
+
+  var link = svg.selectAll(".link")
+      .data(graph.links)
+    .enter().append("line")
+      .attr("class", "link")
+      .style("stroke", "#CCC");
+
+
+  var node = svg.selectAll(".node")
+                        .data(graph.nodes)
+                        .enter().append("g")
+                        .attr("class", "node")
+                        .on("click", click(0))
+                        .on("mouseover", fade(.1))
+                        .on("mouseout",  fade(1));
+
+			node.append("circle")
+                .attr("r", 10)
+                .style("fill", function(d) {return d.color})
+                .style("stroke", "#FFF")
+                .style("stroke-width", 3)
+                .call(force.drag);
+
+  var labels = node.append("text")
+      .text(function(d) { return d.name; });
+
+  force.on("tick", function() {
+    link.attr("x1", function(d) { return d.source.x; })
+        .attr("y1", function(d) { return d.source.y; })
+        .attr("x2", function(d) { return d.target.x; })
+        .attr("y2", function(d) { return d.target.y; });
+
+    node.attr("transform", function(d) {
+        return 'translate(' + [d.x, d.y] + ')';
+    });
+
+  });
+
+
+
+    var linkedByIndex = {};
+        graph.links.forEach(function(d) {
+            linkedByIndex[d.source.index + "," + d.target.index] = 1;
+        });
+
+    function isConnected(a, b) {
+        return linkedByIndex[a.index + "," + b.index]
+            || linkedByIndex[b.index + "," + a.index]
+            || a.index == b.index;
+        }
+
+    function fade(opacity) {
+                return function(d) {
+                    var connected = [d];
+                    node.each(function(o){
+                       if (d.group == o.group){
+                           connected.push(o)
+                       }
+                    });
+                    /**
+                    node.each( function(o) {
+                        if(isConnected(d, o)) {
+                            connected.push(o);
+                            node.each( function (q) {
+                                if(isConnected(o, q)) {
+                                    connected.push(q);
+                                    node.each(function(p) {
+                                        if(isConnected(q, p)){
+                                            connected.push(p);
+                                            node.each(function(u){
+                                                if(isConnected(p, u)){
+                                                    connected.push(u);
+                                                    node.each(function(w){
+                                                        if(isConnected(u, w)){
+                                                            connected.push(w);
+                                                            node.each(function(e){
+                                                                if(isConnected(w, e)){
+                                                                    connected.push(e);
+                                                                    node.each(function(r){
+                                                                        if(isConnected(e, r)){
+                                                                            connected.push(r);
+                                                                        }
+                                                                    })
+                                                                }
+                                                            })
+                                                        }
+                                                    })
+                                                }
+                                            })
+                                        }
+                                    })
+                                }
+                            })
+                        }
+                    });
+                    */
+                    node.style("stroke-opacity", function(o) {
+                        thisOpacity = opacity;
+                        connected.forEach(function(e) {
+                            if(isConnected(e, o)) {
+                                thisOpacity = 1;
+                            }
+                        });
+                    this.setAttribute("fill-opacity", thisOpacity);
+                    return thisOpacity;
+                    });
+                    link.style("stroke-opacity", function(o) {
+                        return o.source === d || o.target === d ? 1 : opacity;
+                    });
+                }
+
+         }
+            function click(opacity) {
+
+               return function(d) {
+                    var connected = [d];
+                    node.each(function(o){
+                       if (d.group == o.group){
+                           connected.push(o)
+                       }
+                    });
+                   node.style("stroke-opacity", function(o) {
+                        thisOpacity = opacity;
+                        connected.forEach(function(e) {
+                            if(isConnected(e, o)) {
+                                thisOpacity = 1;
+                            }
+                        });
+                    this.setAttribute("fill-opacity", thisOpacity);
+                    return thisOpacity;
+                    });
+
+                    link.style("stroke-opacity", function(o) {
+                        return o.source === d || o.target === d ? 1 : opacity;
+                    });
+
+                }
+            }
+
+    /**
+    function click() {
+        console.log(graph.nodes[index].name);
+        console.log($(".text").contents());
+        var color = (graph.nodes[index] == this) ? "orange" : "black";
+    d3.select(this).select("circle").transition()
+        .duration(750)
+        .style("fill", color);
+}
+*/
+
+function f() {
+    var color;
+    node.each(function(d){
+        console.log(d.name);
+        console.log(graph.nodes[index].name);
+        color = (d.name == graph.nodes[index].name) ? "orange" : "black";
+        console.log(color);
+        d.color = color;
+        console.log(d.color);
+    });
+    d3.selectAll("circle").style("fill", function(d) {return d.color});
+    if (index == 10){
+        index = 0;
+    } else {index++};
+    d3.timer(f, 500);
+    return true;
+}
+
+d3.timer(f, 500);
+
+
+		</script>
+	</body>
+</html>

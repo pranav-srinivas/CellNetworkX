@@ -9,17 +9,17 @@
 <script type="text/javascript" charset="utf-8">
 var graph = {
   "nodes":[
-      {"name":"praf","group":1,"color":"black"},
-    {"name":"pmek","group":1,"color":"black"},
-    {"name":"plcg","group":1,"color":"black"},
-    {"name":"PIP2","group":1,"color":"black"},
-    {"name":"PIP3","group":1,"color":"black"},
-    {"name":"p44/42","group":1,"color":"black"},
-    {"name":"pakts473","group":1,"color":"black"},
-    {"name":"PKA","group":1,"color":"black"},
-    {"name":"PKC","group":1,"color":"black"},
-    {"name":"P38","group":1,"color":"black"},
-    {"name":"pjnk","group":1,"color":"black"}
+      {"name":"praf","group":1,"color":"gray"},
+    {"name":"pmek","group":1,"color":"gray"},
+    {"name":"plcg","group":1,"color":"gray"},
+    {"name":"PIP2","group":1,"color":"gray"},
+    {"name":"PIP3","group":1,"color":"gray"},
+    {"name":"p44/42","group":1,"color":"gray"},
+    {"name":"pakts473","group":1,"color":"gray"},
+    {"name":"PKA","group":1,"color":"gray"},
+    {"name":"PKC","group":1,"color":"gray"},
+    {"name":"P38","group":1,"color":"gray"},
+    {"name":"pjnk","group":1,"color":"gray"}
   ],
   "links":[
     {"source":0,"target":1,"value":5},
@@ -196,7 +196,7 @@ var svg = d3.select("body").append("svg")
     function click() {
         console.log(graph.nodes[index].name);
         console.log($(".text").contents());
-        var color = (graph.nodes[index] == this) ? "orange" : "black";
+        var color = (graph.nodes[index] == this) ? "orange" : "gray";
     d3.select(this).select("circle").transition()
         .duration(750)
         .style("fill", color);
@@ -208,7 +208,7 @@ function f() {
     node.each(function(d){
         console.log(d.name);
         console.log(graph.nodes[index].name);
-        color = (d.name == graph.nodes[index].name) ? "orange" : "black";
+        color = (d.name == graph.nodes[index].name) ? "orange" : "gray";
         console.log(color);
         d.color = color;
         console.log(d.color);

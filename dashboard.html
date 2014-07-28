@@ -23,7 +23,7 @@
 
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <script src="../../assets/js/ie10-viewport-bug-workaround.js"></script>
-
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
@@ -60,19 +60,87 @@
 
     <div class="container-fluid">
       <div class="row">
+          <div class="col-md-6">
+              <h4>Cols 6</h4>
+          </div>
+
+          <div class="col-md-5">
+              <h4>Cols 5</h4>
+              <div id="bubbles"></div>
+              <script type="text/javascript">
+
+$(function () {
+
+	Highcharts.setOptions({
+        colors: ['#26A8D4', '#90ed7d', '#191975']
+    });
+    $('#bubbles').highcharts({
+
+	    chart: {
+	        type: 'bubble',
+	        zoomType: 'xy'
+	    },
+
+	    credits: {
+            enabled: false
+        },
+        legend: {
+        	floating: false
+        },
+
+	    title: {
+	    	text: 'Protein Transcription Factors and mRNA Levels'
+	    },
+
+	    series: [{
+	    	name: "Protein 1",
+	        data: [[10,100,79],[20,74,60],[30,68,58],[40,79,56],[50,67,73],[65,58,42],[70,43,87],[80,39,40],[90,27,33],[100,2,31]]
+	    }, {
+	    	name: "Protein 2",
+	        data: [[5,15,8],[10,75,16],[15,54,12],[20,55,27],[25,25,35],[30,63,44],[35,33,56],[40,12,67],[45,67,87],[50,25,81]]
+	    }, {
+	    	name: "Protein 3",
+	        data: [[10,13,4],[20,12,15],[30,24,23],[40,30,36],[50,45,34],[60,56,45],[70,60,56],[80,78,75],[90,67,67],[100,77,82]]
+	    }],
+
+	    xAxis: {
+	    	title: {
+	    		text: "Time(seconds)"
+	    	},
+	    	min: 0
+	    },
+	    yAxis: {
+	    	title: {
+	    		text: "Protein Level(units)"
+	    	},
+	    	min: 0
+	    },
+
+	});
+
+});
+		</script>
+          </div>
+
+          <div class="col-md-1">
+              <h4>Cols 1</h4>
+          </div>
 
 
 
 
-        
+
+
       </div>
     </div>
 
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <script src="../../dist/js/bootstrap.min.js"></script>
-    
+    <script src="http://code.highcharts.com/highcharts.js"></script>
+    <script src="http://code.highcharts.com/highcharts-more.js"></script>
+    <script src="http://code.highcharts.com/modules/exporting.js"></script>
+
   </body>
 </html>

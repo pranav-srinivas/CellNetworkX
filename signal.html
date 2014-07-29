@@ -37,7 +37,8 @@ var graph = {
 var width = 960,
     height = 600;
 
-var index = 0;
+var connectedNodes = [];
+    connectedNodes.push(graph.nodes[0]);
 
 var force = d3.layout.force()
     .charge(-120)
@@ -104,6 +105,20 @@ var svg = d3.select("body").append("svg")
             || a.index == b.index;
         }
 
+    function isNext(a, b) {
+        return linkedByIndex[a.index + "," + b.index];
+    }
+
+    function isLast(a){
+        var index = true;
+        node.each(function(b){
+            if (isNext(a, b)){
+                index = false;
+            }
+        });
+        return index;
+    }
+
     function fade(opacity) {
                 return function(d) {
                     var connected = [d];
@@ -112,43 +127,7 @@ var svg = d3.select("body").append("svg")
                            connected.push(o)
                        }
                     });
-                    /**
-                    node.each( function(o) {
-                        if(isConnected(d, o)) {
-                            connected.push(o);
-                            node.each( function (q) {
-                                if(isConnected(o, q)) {
-                                    connected.push(q);
-                                    node.each(function(p) {
-                                        if(isConnected(q, p)){
-                                            connected.push(p);
-                                            node.each(function(u){
-                                                if(isConnected(p, u)){
-                                                    connected.push(u);
-                                                    node.each(function(w){
-                                                        if(isConnected(u, w)){
-                                                            connected.push(w);
-                                                            node.each(function(e){
-                                                                if(isConnected(w, e)){
-                                                                    connected.push(e);
-                                                                    node.each(function(r){
-                                                                        if(isConnected(e, r)){
-                                                                            connected.push(r);
-                                                                        }
-                                                                    })
-                                                                }
-                                                            })
-                                                        }
-                                                    })
-                                                }
-                                            })
-                                        }
-                                    })
-                                }
-                            })
-                        }
-                    });
-                    */
+
                     node.style("stroke-opacity", function(o) {
                         thisOpacity = opacity;
                         connected.forEach(function(e) {
@@ -196,13 +175,24 @@ var svg = d3.select("body").append("svg")
 function f() {
     var color;
     node.each(function(d){
-        color = (d.name == graph.nodes[index].name) ? "orange" : "gray";
+        connectedNodes.forEach(function(e){
+            color = (d.name == e.name) ? "orange" : "gray";
+        });
         d.color = color;
     });
     d3.selectAll("circle").style("fill", function(d) {return d.color});
-    if (index == 10){
-        index = 0;
-    } else {index++};
+    var newNodes = [];
+    connectedNodes.forEach(function(d){
+        node.each(function(e){
+            if(isNext(d, e)){
+                newNodes.push(e);
+            } else if (isLast(d)){
+                newNodes.push(graph.nodes[0]);
+            }
+        });
+    });
+    connectedNodes = [];
+    connectedNodes = newNodes;
     d3.timer(f, 500);
     return true;
 }

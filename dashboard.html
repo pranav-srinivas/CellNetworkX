@@ -45,272 +45,89 @@
         </div>
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
-            <li><a href="#">Network</a></li>
-            <li><a href="#">Expressions</a></li>
-            <li><a href="#">Show</a></li>
-            <li><a href="#">Play</a></li>
+
+            <li><a id="UploadNetwork" href="#">Upload Network</a></li>
+
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Background Network <span class="caret"></span></a>
+                <ul class="dropdown-menu" role="menu">
+                  <li><a href="#">KEGG Background Network 1</a></li>
+                  <li><a href="#">KEGG Background Network 2</a></li>
+                  <li><a href="#">PPI Background Network </a></li>
+                </ul>
+            </li>
+
+            <li><a id="ExpressionData" href="#">Expression Data</a></li>
+            <li><a id="ShowNetwork" href="#">Show Network</a></li>
+            <li><a id="Animation" href="#">Animation</a></li>
+            <li><a id="Back" href="#">Back</a></li>
           </ul>
-          <form class="navbar-form navbar-right">
-            <input type="text" class="form-control" placeholder="Search...">
-          </form>
         </div>
       </div>
     </div>
 
-    <div class="container-fluid">
-      <div class="row">
-          <div class="col-md-6">
-              <h4>Cols 6</h4>
-                       <script>
+<input type="file" id="networkFile" style="display: none;" />
+<input type="file" id="expressionFile" style="display: none;" />
 
-var w = window.innerWidth;
-var h = window.innerHeight;
-var fill = d3.scale.category20();
-var currFileName = "hsa05200.json";
-var prevFileName = [ ];
 
-var svg = d3.select("#chart")
-   .append("svg:svg");
+<script type="text/javascript">
 
-svg.attr("width", w)
-   .attr("height", h);
-
-svg.attr("pointer-events", "all");
-
-var zoomer = d3.behavior.zoom().on("zoom", redraw);
-zoomer.translate([0, 0]).scale(1);
-            
-var vis = svg.append('svg:g')
-             .call(zoomer)
-             .append('svg:g');
-
-function redraw() {
-  console.log("here", d3.event.translate, d3.event.scale);
-  vis.attr("transform",
-      "translate(" + d3.event.translate + ")"
-      + " scale(" + d3.event.scale + ")");
-}
-
-var draw = function(nodes,links) {
-  var force = d3.layout.force()
-      .charge(-100)
-      .linkDistance(50)
-      .nodes(nodes)
-      .links(links)
-      .size([w, h])
-      .start();
-
-  var link = vis.selectAll("line.link")
-      .data(links)
-      .enter().append("svg:line")
-      .attr("class", "link")
-      .style("stroke", function(d) { 
-      if (d.subtype.name == "inhibition")
-  return "red";
-              if (d.subtype.name == "activation")
-                  return "green";
-              if (d.subtype.name == "phosphorylation")
-  return "yellow";
-              return "blue";
-  })
-
-      .style("stroke-width", function(d) { return 2; })
-      .attr("x1", function(d) { return d.source.x; })
-      .attr("y1", function(d) { return d.source.y; })
-      .attr("x2", function(d) { return d.target.x; })
-      .attr("y2", function(d) { return d.target.y; });
-
-  var node = vis.selectAll("circle.node")
-      .data(nodes)
-      .enter().append("svg:circle")
-      .attr("class", "node")
-      .attr("cx", function(d) { return d.x; })
-      .attr("cy", function(d) { return d.y; })
-      .attr("r",  function(d) {
-        if (d.type == "map") return 20;
-        return 10;
-      })
-      .style("fill", function(d) { return fill(d.id); })
-      .call(force.drag)
-
-  node.append("svg:title")
-      .text(function(d) { return d.graphics.name; });
-
-  node.on("mouseover", function(d) {
-    d3.select(this).style("fill", "red");
-  });
-
-  node.on("mouseout", function(d) { 
-    d3.select(this).style("fill", fill(d.id));
-  }); 
-
-  node.on("click", function(d) { showDetail(d) });
-
-  node.on("dblclick", function(d) { showDetail(d) });
-  vis.style("opacity", 1e-6)
-     .transition()
-     .duration(1000)
-     .style("opacity", 1);
-
-  force.on("tick", function() {
-    link.attr("x1", function(d) { return d.source.x; })
-        .attr("y1", function(d) { return d.source.y; })
-        .attr("x2", function(d) { return d.target.x; })
-        .attr("y2", function(d) { return d.target.y; });
-
-    node.attr("cx", function(d) { return d.x; })
-        .attr("cy", function(d) { return d.y; });
-  });
-};
-
-resetGraphics = function()
-{
-  d3.select("svg").remove();
-  zoomer = d3.behavior.zoom().on("zoom", redraw);
-  zoomer.translate([0, 0]).scale(1);
-  svg = d3.select("#chart")
-          .append("svg:svg");
-
-  svg.attr("width", w)
-     .attr("height", h);
-
-  svg.attr("pointer-events", "all");
-
-  vis = svg.append('svg:g')
-  .call(zoomer)
-  .append('svg:g');
-}
-
-showDetail = function(d) 
-{
-  if (d.type == "map") {
-      var mapName = d.name;
-
-      var idx = prevFileName.length;
-      prevFileName[idx] = currFileName;
-      currFileName = mapName.substr(5) + ".json";
-      
-      resetGraphics();
-      loadJSON(currFileName);
-
-  }
- }
-
-loadJSON = function(filename) {
-        
-    d3.json(filename, function(data) {
-
-      var nodes = data.pathway.entry;
-      var links = data.pathway.relation;
-
-      document.title = data.pathway.title;
-
-      // Create Node to Index map
-      var nodeId2Index = { };
-      var nodeIdx = 0;
-      nodes.forEach(function(n) {
-        nodeId2Index[n.id] = nodeIdx;
-        ++nodeIdx;
-      });
-    
-        // Assign source and target for each link
-     links.forEach(function(l) {
-       l.source = nodeId2Index[l.entry1];
-       l.target = nodeId2Index[l.entry2];
-     });
-
-   draw(nodes, links)
-
+$('#UploadNetwork').click( function() { 
+  document.getElementById('networkFile').click();
 });
 
+$('#ExpressionData').click( function() { 
+  document.getElementById('expressionFile').click();
+});
+
+
+$('#ShowNetwork').click( function() { 
+  showNetwork();
+});
+
+$('#Animation').click( function() { 
+  doAnimation();
+});
+
+
+$('#Back').click( function() { 
+  goBack()();
+});
+
+var networkType = 0;
+
+selectBackgroundNetwork = function(value)
+{
+    if (value == "PPI") {
+      selectPPI();
+    }
+    else if (value == "KEGGfloating") {
+      selectKEGGfloating();
+    }
+    else if (value == "KEGGfixed") {
+      selectKEGGfixed();
+    }
 }
 
-loadJSON(currFileName);
-
-goBack = function() {
-
-    if(prevFileName == 0) return;
-    var idx = prevFileName.length - 1;
-    currFileName  = prevFileName[idx];
-    prevFileName.splice(idx, 1);
-    resetGraphics();
-    loadJSON(currFileName);
+function selectPPI()
+{
+  networkType = 2;
 }
+
+function selectKEGGfloating()
+{
+  networkType = 3;
+}
+
+function selectKEGGfixed()
+{
+  networkType = 4;
+}
+
 </script>
-          </div>
 
-          <div class="col-md-5">
-              <h4>Cols 5</h4>
-              <div id="bubbles"></div>
-              <script type="text/javascript">
 
-$(function () {
-
-	Highcharts.setOptions({
-        colors: ['#26A8D4', '#90ed7d', '#191975']
-    });
-    $('#bubbles').highcharts({
-
-	    chart: {
-	        type: 'bubble',
-	        zoomType: 'xy'
-	    },
-
-	    credits: {
-            enabled: false
-        },
-        legend: {
-        	floating: false
-        },
-
-	    title: {
-	    	text: 'Protein Transcription Factors and mRNA Levels'
-	    },
-
-	    series: [{
-	    	name: "Protein 1",
-	        data: [[10,100,79],[20,74,60],[30,68,58],[40,79,56],[50,67,73],[65,58,42],[70,43,87],[80,39,40],[90,27,33],[100,2,31]]
-	    }, {
-	    	name: "Protein 2",
-	        data: [[5,15,8],[10,75,16],[15,54,12],[20,55,27],[25,25,35],[30,63,44],[35,33,56],[40,12,67],[45,67,87],[50,25,81]]
-	    }, {
-	    	name: "Protein 3",
-	        data: [[10,13,4],[20,12,15],[30,24,23],[40,30,36],[50,45,34],[60,56,45],[70,60,56],[80,78,75],[90,67,67],[100,77,82]]
-	    }],
-
-	    xAxis: {
-	    	title: {
-	    		text: "Time (Seconds)"
-	    	},
-	    	min: 0
-	    },
-	    yAxis: {
-	    	title: {
-	    		text: "Protein Level (Units)"
-	    	},
-	    	min: 0
-	    },
-
-	});
-
-});
-		</script>
-          </div>
-
-          <div class="col-md-1">
-              <h4>Cols 1</h4>
-          </div>
-
-      </div>
-    </div>
-
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
     <script src="../../dist/js/bootstrap.min.js"></script>
-    <script src="http://code.highcharts.com/highcharts.js"></script>
-    <script src="http://code.highcharts.com/highcharts-more.js"></script>
-    <script src="http://code.highcharts.com/modules/exporting.js"></script>
 
   </body>
 </html>

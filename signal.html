@@ -9,7 +9,7 @@
 <script type="text/javascript" charset="utf-8">
 var graph = {
   "nodes":[
-      {"name":"praf","group":1,"color":"gray"},
+    {"name":"praf","group":1,"color":"gray"},
     {"name":"pmek","group":1,"color":"gray"},
     {"name":"plcg","group":1,"color":"gray"},
     {"name":"PIP2","group":1,"color":"gray"},
@@ -34,11 +34,26 @@ var graph = {
     {"source":9,"target":10,"value":5}
   ]
 };
+
+var data = {
+  "average":[46.46,31.465,11.909,47.923,23.622,13.25,38.72,457.1,12.907,34.37,44.76],
+  "pmek":[13.2,16.5,44.1,82.8,19.8,3.75,36.5,15,61.5,21.5],
+  "plcg":[8.82,12.3,14.6,23.1,5.19,17.6,10.4,14.6,10.6,1.88],
+  "PIP2":[18.3,16.8,10.2,13.5,9.73,22.1,132,30.5,21.1,205],
+  "PIP3":[58.8,8.13,13,1.29,24.8,10.9,16.3,17.5,41.8,43.7],
+  "p44/42":[6.61,18.6,14.9,5.83,21.1,11.9,8.66,20.2,11.5,13.2],
+  "pakts473":[17,32.5,32.5,11.8,46.1,25.7,17.9,45.3,23.5,135],
+  "PKA":[414,352,403,528,305,610,835,466,445,213],
+  "PKC":[17,3.37,11.4,13.7,4.66,13.7,15,6.44,29.2,14.6],
+  "P38":[44.9,16.5,31.9,28.6,25.7,49.1,35.9,24.4,61,26.7],
+  "pjnk":[40,61.5,19.5,23.1,81.3,57.8,18.1,20,25.3,101]
+}
+
 var width = 960,
     height = 600;
 
-var connectedNodes = [];
-    connectedNodes.push(graph.nodes[0]);
+var index = 0;
+var count = 0;
 
 var force = d3.layout.force()
     .charge(-120)
@@ -175,25 +190,31 @@ var svg = d3.select("body").append("svg")
 function f() {
     var color;
     node.each(function(d){
-        connectedNodes.forEach(function(e){
-            color = (d.name == e.name) ? "orange" : "gray";
-        });
+        color = (d.name == graph.nodes[index].name) ? "orange" : "gray";
         d.color = color;
     });
     d3.selectAll("circle").style("fill", function(d) {return d.color});
-    var newNodes = [];
-    connectedNodes.forEach(function(d){
-        node.each(function(e){
-            if(isNext(d, e)){
-                newNodes.push(e);
-            } else if (isLast(d)){
-                newNodes.push(graph.nodes[0]);
-            }
-        });
-    });
-    connectedNodes = [];
-    connectedNodes = newNodes;
-    d3.timer(f, 500);
+    if (index == 10){
+        index = 0;
+    } else {
+        index++;
+    }
+    var time;
+    var name = graph.nodes[index].name;
+
+    var nameData = data[name];
+
+
+    if ([nameData[count]] > data.average[count]){
+        time = 250;
+    } else if (data[name[count]] == data.average[count]){
+        time = 1000;
+    } else {
+        time = 1750;
+    }
+
+    count++;
+    d3.timer(f, time);
     return true;
 }
 

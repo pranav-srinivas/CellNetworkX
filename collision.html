@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<body>
+<script src="http://wellcaffeinated.net/PhysicsJS/examples/physicsjs-full.js"></script>
+<canvas id="viewport" width="500" height="400"></canvas>
+<script>
+    Physics(function (world) {
+
+    var viewWidth = 500;
+    var viewHeight = 400;
+
+    var renderer = Physics.renderer('canvas', {
+        el: 'viewport',
+        width: viewWidth,
+        height: viewHeight,
+        meta: false, // don't display meta data
+        styles: {
+            'circle': {
+                fillStyle: 'blue'
+            },
+            'convex-polygon': {
+                fillStyle: 'red'
+            }
+        }
+    });
+
+    // add the renderer
+    world.add(renderer);
+    // render on each step
+    world.subscribe('step', function () {
+        world.render();
+    });
+
+    // bounds of the window
+    var viewportBounds = Physics.aabb(0, 0, viewWidth, viewHeight);
+
+    var bounds = Physics.aabb(75, 25, 425, 375);
+    // constrain objects to these bounds
+    world.add(Physics.behavior('edge-collision-detection', {
+        aabb: viewportBounds,
+        restitution: 0.99,
+        cof: 0
+    }));
+
+
+   var signal = Physics.body('convex-polygon', {
+    // place the centroid of the polygon at (300, 200)
+    x: 300,
+    y: 150,
+    vx: -0.5,
+    label: 'signal',
+    // the centroid is automatically calculated and used to position the shape
+    vertices: [
+        { x: -20, y: -20 },
+        { x: 20, y: -20 },
+        { x: 20, y: 20 },
+        { x: -20, y: 20 }
+    ]
+});
+
+    var p1 = Physics.body('circle', {
+        x: 150,
+        y: 150,
+        vx: 0.5,
+        radius: 20,
+        label: 'p1'
+    });
+
+    world.add(signal);
+    world.add(p1);
+
+    // ensure objects bounce when edge collision is detected
+    world.add(Physics.behavior('body-impulse-response'));
+    world.add(Physics.behavior('sweep-prune'));
+    world.add(Physics.behavior('body-collision-detection'));
+
+    // subscribe to ticker to advance the simulation
+    Physics.util.ticker.subscribe(function (time, dt) {
+
+        world.step(time);
+    });
+
+    // start the ticker
+    Physics.util.ticker.start();
+
+});
+
+</script>
+</body>
+</html>

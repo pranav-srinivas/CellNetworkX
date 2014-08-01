@@ -8,10 +8,10 @@
     <meta name="author" content="">
     <link rel="icon" href="../../favicon.ico">
 
-    <title>Envision Dashboard </title>
+    <title>EnvisionPPI</title>
 
     <!-- Bootstrap core CSS -->
-    <link href="./CSS/bootstrap.min.css" rel="stylesheet">
+    <link href="./CSS/bootstrap.css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
     <link href="./CSS/dashboard.css" rel="stylesheet">
@@ -30,12 +30,7 @@
     <![endif]-->
   </head>
 
-  <div id="chart">
-  </div>
-
   <body>
-
-  <script src="./JS/bootstrap.min.js"></script>
 
     <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
       <div class="container-fluid">
@@ -71,18 +66,68 @@
       </div>
     </div>
 
-  <input type="file" id="networkFile" style="display: none;" />
-  <input type="file" id="expressionFile" style="display: none;" />
+<input type="file" id="networkFile" style="display: none;" />
+<input type="file" id="expressionFile" style="display: none;" />
 
-  <script type="text/javascript" src="/Users/pranav/D3/d3.js"></script>
-  <script type="text/javascript" src="custom.js"></script>
-  <script type="text/javascript" src="kegg.js"></script> 
-  <script type="text/javascript" src="ppi.js"></script>
-  <script type="text/javascript" src="animation.js"></script>
-  <script type="text/javascript" src="main.js"></script>
 
-  <script src="./JS/bootstrap.min.js"></script>
+<script type="text/javascript">
 
-</body>
+$('#UploadNetwork').click( function() { 
+  document.getElementById('networkFile').click();
+});
 
+$('#ExpressionData').click( function() { 
+  document.getElementById('expressionFile').click();
+});
+
+
+$('#ShowNetwork').click( function() { 
+  showNetwork();
+});
+
+$('#Animation').click( function() { 
+  doAnimation();
+});
+
+
+$('#Back').click( function() { 
+  goBack()();
+});
+
+var networkType = 0;
+
+selectBackgroundNetwork = function(value)
+{
+    if (value == "PPI") {
+      selectPPI();
+    }
+    else if (value == "KEGGfloating") {
+      selectKEGGfloating();
+    }
+    else if (value == "KEGGfixed") {
+      selectKEGGfixed();
+    }
+}
+
+function selectPPI()
+{
+  networkType = 2;
+}
+
+function selectKEGGfloating()
+{
+  networkType = 3;
+}
+
+function selectKEGGfixed()
+{
+  networkType = 4;
+}
+
+</script>
+
+
+    <script src=".js/bootstrap.min.js"></script>
+
+  </body>
 </html>

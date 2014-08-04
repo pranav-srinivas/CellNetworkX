@@ -53,6 +53,7 @@ var fullExpressionPathName = "";
 //                    4: KEGG Background Network fixed 
 //----------------------------------------------------------
 var networkType = 2;
+$("#PPI").addClass("activeBN");
 
 var BNpressed = 0;
 
@@ -60,16 +61,27 @@ var BNpressed = 0;
 // Navigation Bar Processing
 //----------------------------------------------------------
 
+function DeselectAllBN()
+{
+    $("#PPI").removeClass("activeBN");
+    $("#KBN1").removeClass("activeBN");
+    $("#KBN2").removeClass("activeBN");
+    $("#NONE").removeClass("activeBN");
+}
+
 $(document).ready(function() {
     $('#networkFile').change(function(evt) {
         fullNetworkPathName = ($(this).val());
         customNetworkFileName = fullNetworkPathName.split(/(\\|\/)/g).pop()
         networkType = 1;
+	DeselectAllBN();
+	$("#NONE").addClass("activeBN");
     });
 
     $('#expressionFile').change(function(evt) {
         fullExpressionPathName = ($(this).val());
         expressionFileName = fullExpressionPathName.split(/(\\|\/)/g).pop()
+	loadExpressionData(expressionFileName);
     });
 
     $("a.dropdown-toggle").click(function(evt) {
@@ -83,17 +95,27 @@ $(document).ready(function() {
 
     $("ul.dropdown-menu a").click(function(evt) {
 	    $("a.dropdown-toggle").dropdown();
+
+	    DeselectAllBN();
+
 	    var menuText = this.innerText;
 	    if (menuText == "PPI Background Network") {
 		networkType = 2;
+		$("#PPI").addClass("activeBN");
 	    }
 	    else if (menuText == "KEGG Background Network 1") {
 		networkType = 3;
 		currFileName = backgroundKEGGFileName;
+		$("#KBN1").addClass("activeBN");
 	    }
 	    else if (menuText == "KEGG Background Network 2") {
 		networkType = 4;
 		currFileName = backgroundKEGGFileName;
+		$("#KBN2").addClass("activeBN");
+	    }
+	    else if (menuText == "No Background Network") {
+		networkType = 1;
+		$("#NONE").addClass("activeBN");
 	    }
    });
 

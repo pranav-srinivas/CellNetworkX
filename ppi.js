@@ -1,5 +1,10 @@
 var myNodes = {};
-var connectivityLevel = 1;
+
+myNodes["KRAS"] = 1;
+myNodes["MTOR"] = 1;
+myNodes["BRAF"] = 1;
+myNodes["PTEN"] = 1;
+myNodes["STAT5A"] = 1;
 
 function VisualizePPI(nodes, links)
 {
@@ -70,15 +75,7 @@ function loadPpiJSON(expressionFileName)
   
     var nodes = data.Nodes;
     var links = data.Links;
-  
-    myNodes["KRAS"] = 1;
-    myNodes["MTOR"] = 1;
-    myNodes["BRAF"] = 1;
-    myNodes["PTEN"] = 1;
-    // myNodes["EGFR"] = 1;
-    myNodes["STAT5A"] = 1;
-    // myNodes["JAK2"] = 1;
-  
+ 
     var myNodeIds  = {};
     var visibleIds = {};
   
@@ -91,7 +88,7 @@ function loadPpiJSON(expressionFileName)
   
     var visibleLinks = [];
   
-    for (var i = 0; i < connectivityLevel; i++) {
+    {
       links.forEach(function(l) {
         if (myNodeIds.hasOwnProperty(l.interactor_1_hprd_id) || myNodeIds.hasOwnProperty(l.interactor_2_hprd_id)) {
           visibleLinks[visibleLinks.length] = l;
@@ -99,12 +96,6 @@ function loadPpiJSON(expressionFileName)
           visibleIds[l.interactor_2_hprd_id] = 1;
         }
       });
-  
-      if (connectivityLevel > (i+1)) {
-        for (var id in visibleIds) {
-          myNodeIds[id] = 1;
-        }
-      }
     }
   
     var visibleNodes = [];

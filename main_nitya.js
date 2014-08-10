@@ -158,14 +158,8 @@ $('#Animation').click( function() {
   doAnimation();
 });
 
-$('button').click( function() {
-  if(networkType == 3 || networkType == 4) {
-    search();
-  }
-});
-
 $('#Back').click( function() {
-  goBack()();
+  goBack();
 });
 
 selectBackgroundNetwork = function(value)
@@ -240,9 +234,15 @@ function showDetail(d)
   }
 }
 
+
+
+/**
+
 function search(){
-  var mapName = $('#search');
-  console.log($('#search'));
+  var mapName = $('#form');
+  console.log($_POST['search']);
+  console.log("hi");
+
   var number;
   names.forEach(function(d){
     console.log(d[0]);
@@ -254,7 +254,9 @@ function search(){
   prevFileName[idx] = currFileName;
   currFileName = "hsa" + number + ".json";
   loadKeggJSON(currFileName);
+
 }
+*/
 
 function showNetwork()
 {

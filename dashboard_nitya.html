@@ -8,7 +8,7 @@
     <meta name="author" content="">
     <link rel="icon" href="../../favicon.ico">
 
-    <title>Envision Dashboard </title>
+    <title>Protein X</title>
 
     <!-- Bootstrap core CSS -->
     <link href="./CSS/bootstrap.min.css" rel="stylesheet">
@@ -46,15 +46,15 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#">Envision X</a>
+          <a class="navbar-brand" href="#">Protein X</a>
         </div>
 
         <div class="navbar-collapse collapse">
-            <form class="navbar-form navbar-left" role="search">
+            <form class="navbar-form navbar-left" name="mainform" action="#" onsubmit="return nitya()">
         <div class="form-group">
-          <input type="text" class="form-control" id="search" placeholder="Search">
+          <input type="text" class="form-control" name="search" placeholder="Search">
         </div>
-        <button type="submit" id="button" class="btn btn-default">Submit</button>
+        <button type="submit" class="btn btn-default">Submit</button>
       </form>
           <ul class="nav navbar-nav navbar-right">
 
@@ -82,16 +82,36 @@
 
   <input type="file" id="networkFile" style="display: none;" />
   <input type="file" id="expressionFile" style="display: none;" />
+  <script>
+  function nitya(){
+      alert("search for " + document.forms["mainform"]["search"].value);
+      var mapName = document.forms["mainform"]["search"].value;
 
+      var number;
+      names.forEach(function(d){
+          console.log(d[0]);
+          if (d[1] == mapName){
+              number = d[0];
+          }
+      });
+      var final = "0" + number;
+      console.log(final);
+      var idx = prevFileName.length;
+      prevFileName[idx] = currFileName;
+      currFileName = "hsa" + final + ".json";
+      loadKeggJSON(currFileName);
+      return false;
+  }
+  </script>
   <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
   <script type="text/javascript" src="custom.js"></script>
   <script type="text/javascript" src="kegg.js"></script>
   <script type="text/javascript" src="ppi.js"></script>
-  <script type="text/javascript" src="animation.js"></script>
   <script type="text/javascript" src="main_nitya.js"></script>
   <script type="text/javascript" src="expression.js"></script>
 
   <script src="./JS/bootstrap.min.js"></script>
+
 
 </body>
 

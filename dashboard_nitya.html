@@ -35,7 +35,24 @@
 
   <body>
 
-  <script src="./JS/bootstrap.min.js"></script>
+      <!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role=".modeldialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" id="myModalLabel">Help and Instructions</h4>
+      </div>
+      <div class="modal-body">
+        Hi everyone...... I really love Protein X because it is really pretty. Over here I shall explain how to use this lovely
+          protein X. MHHMMMM. Made by 4 lovely teenagers.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
 
     <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
       <div class="container-fluid">
@@ -50,14 +67,22 @@
         </div>
 
         <div class="navbar-collapse collapse">
-            <form class="navbar-form navbar-left" name="mainform" action="#" onsubmit="return nitya()">
+            <form class="navbar-form navbar-left" name="mainform" action="#" onsubmit="return lookUp()">
         <div class="form-group">
           <input type="text" class="form-control" name="search" placeholder="Search">
         </div>
         <button type="submit" class="btn btn-default">Submit</button>
       </form>
-          <ul class="nav navbar-nav navbar-right">
 
+          <ul class="nav navbar-nav navbar-right">
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Load Page<span class="caret"></span></a>
+                <ul class="dropdown-menu" role="menu" style="background-color: gray">
+                  <li><a id="05223" href="#">Non-small cell lung cancer</a></li>
+                  <li><a id="05222" href="#">Small cell lung cancer</a></li>
+                  <li><a id="05221" href="#">Acute myeloid leukemia</a></li>
+                </ul>
+            </li>
             <li><a id="UploadNetwork" href="#">Upload Network</a></li>
 
             <li class="dropdown">
@@ -74,31 +99,29 @@
             <li><a id="ShowNetwork" href="#">Show Network</a></li>
             <li><a id="Animation" href="#">Animation</a></li>
             <li><a id="Back" href="#">Back</a></li>
-	    <li><a id="Help" href="#">Help</a></li>
-          </ul>
-        </div>
-      </div>
-    </div>
+
+<!-- Button trigger modal -->
+<li><a id="help" type="button" data-toggle="modal" data-target="#myModal">Help</a></li>
+
+
+
 
   <input type="file" id="networkFile" style="display: none;" />
   <input type="file" id="expressionFile" style="display: none;" />
   <script>
-  function nitya(){
-      alert("search for " + document.forms["mainform"]["search"].value);
+  function lookUp(){
       var mapName = document.forms["mainform"]["search"].value;
-
+      console.log(mapName);
       var number;
       names.forEach(function(d){
-          console.log(d[0]);
           if (d[1] == mapName){
+              console.log(d[0]);
               number = d[0];
           }
       });
-      var final = "0" + number;
-      console.log(final);
       var idx = prevFileName.length;
       prevFileName[idx] = currFileName;
-      currFileName = "hsa" + final + ".json";
+      currFileName = "hsa" + number + ".json";
       loadKeggJSON(currFileName);
       return false;
   }

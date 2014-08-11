@@ -31,27 +31,27 @@ function redraw() {
       + " scale(" + d3.event.scale + ")");
 }
 
-var names = [[05223, "Non-small cell lung cancer"], [05222, "Small cell lung cancer"],
-            [05221, "Acute myeloid leukemia"], [05220, "Chronic myeloid leukemia"],
-            [05219, "Bladder cancer"], [05218, "Melanoma"], [05217, "Basal cell carcinoma"],
-            [05216, "Thyroid cancer"], [05215, "Prostate cancer"], [05214, "Glioma"],
-            [05213, "Endometrial cancer"], [05212, "Pancreatic cancer"],
-            [05211, "Renal cell carcinoma"], [05210, "Colorectal cancer"],
-            [05200, "Pathways in cancer"], [05010, "Alzheimer's disease"],
-            [04920, "Adipocytokine signaling pathway"], [04916, "Melanogenesis"],
-            [04910, "Insulin signaling pathway"], [04662, "B cell receptor signaling pathway"],
-            [04630, "Jak-STAT signaling pathway"], [04620, "Toll-like receptor signaling pathway"],
-            [04520, "Adherens junction"], [04510, "Focal adhesion"], [04370, "VEGF signaling pathway"],
-            [04350, "TGF-beta signaling pathway"], [04340, "Hedgehog signaling pathway"],
-            [04310, "Wnt signaling pathway"], [04210, "Apoptosis"], [04151, "PI3K-Akt signaling pathway"],
-            [04150, "mTOR signaling pathway"], [04120, "Ubiquitin mediated proteolysis"],
-            [04115, "p53 signaling pathway"], [04110, "Cell cycle"], [04070, "Phosphatidylinositol signaling system"],
-            [04068, "Fox0 signaling pathway"], [04066, "HIF-1 signaling pathway"],
-            [04064, "NF-kappa B signaling pathway"], [04062, "Chemokine signaling pathway"],
-            [04060, "Cytokine-cytokine receptor interaction"], [04020, "Calcium signaling pathway"],
-            [04012, "ErbB signaling pathway"], [04010, "MAPK signaling pathway"],
-            [03320, "PPAR signaling pathway"], [00020, "Citrate cycle (TCA cycle)"],
-            [00010, "Glycolysis / Gluconeogenesis"]];
+var names = [["05223", "Non-small cell lung cancer"], ["05222", "Small cell lung cancer"],
+            ["05221", "Acute myeloid leukemia"], ["05220", "Chronic myeloid leukemia"],
+            ["05219", "Bladder cancer"], ["05218", "Melanoma"], ["05217", "Basal cell carcinoma"],
+            ["05216", "Thyroid cancer"], ["05215", "Prostate cancer"], ["05214", "Glioma"],
+            ["05213", "Endometrial cancer"], ["05212", "Pancreatic cancer"],
+            ["05211", "Renal cell carcinoma"], ["05210", "Colorectal cancer"],
+            ["05200", "Pathways in cancer"], ["05010", "Alzheimer's disease"],
+            ["04920", "Adipocytokine signaling pathway"], ["04916", "Melanogenesis"],
+            ["04910", "Insulin signaling pathway"], ["04662", "B cell receptor signaling pathway"],
+            ["04630", "Jak-STAT signaling pathway"], ["04620", "Toll-like receptor signaling pathway"],
+            ["04520", "Adherens junction"], ["04510", "Focal adhesion"], ["04370", "VEGF signaling pathway"],
+            ["04350", "TGF-beta signaling pathway"], ["04340", "Hedgehog signaling pathway"],
+            ["04310", "Wnt signaling pathway"], ["04210", "Apoptosis"], ["04151", "PI3K-Akt signaling pathway"],
+            ["04150", "mTOR signaling pathway"], ["04120", "Ubiquitin mediated proteolysis"],
+            ["04115", "p53 signaling pathway"], ["04110", "Cell cycle"], ["04070", "Phosphatidylinositol signaling system"],
+            ["04068", "Fox0 signaling pathway"], ["04066", "HIF-1 signaling pathway"],
+            ["04064", "NF-kappa B signaling pathway"], ["04062", "Chemokine signaling pathway"],
+            ["04060", "Cytokine-cytokine receptor interaction"], ["04020", "Calcium signaling pathway"],
+            ["04012", "ErbB signaling pathway"], ["04010", "MAPK signaling pathway"],
+            ["03320", "PPAR signaling pathway"], ["00020", "Citrate cycle (TCA cycle)"],
+            ["00010", "Glycolysis / Gluconeogenesis"]];
 
 var currFileName = "kegg.json";
 var prevFileName    = [ ];
@@ -233,30 +233,6 @@ function showDetail(d)
     loadKeggJSON(currFileName);
   }
 }
-
-
-
-/**
-
-function search(){
-  var mapName = $('#form');
-  console.log($_POST['search']);
-  console.log("hi");
-
-  var number;
-  names.forEach(function(d){
-    console.log(d[0]);
-    if (d[1] == mapName){
-      number = d[0];
-    }
-  });
-  var idx = prevFileName.length;
-  prevFileName[idx] = currFileName;
-  currFileName = "hsa" + number + ".json";
-  loadKeggJSON(currFileName);
-
-}
-*/
 
 function showNetwork()
 {

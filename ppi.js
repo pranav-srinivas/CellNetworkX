@@ -5,7 +5,7 @@ myNodes["MTOR"] = 1;
 myNodes["BRAF"] = 1;
 myNodes["PTEN"] = 1;
 myNodes["STAT5A"] = 1;
-
+  
 function VisualizePPI(nodes, links)
 {
   var force = d3.layout.force()
@@ -65,6 +65,10 @@ function VisualizePPI(nodes, links)
     node.attr("cx", function(d) { return d.x; })
         .attr("cy", function(d) { return d.y; });
   });
+
+  if (doAnimation) {
+    AnimateNetwork(nodes, links);
+  }
 }
 
 
@@ -75,7 +79,7 @@ function loadPpiJSON(expressionFileName)
   
     var nodes = data.Nodes;
     var links = data.Links;
- 
+  
     var myNodeIds  = {};
     var visibleIds = {};
   
@@ -119,6 +123,50 @@ function loadPpiJSON(expressionFileName)
       l.target = nodeId2Index[l.interactor_2_hprd_id];
     };
   
-    VisualizePPI(visibleNodes, visibleLinks);
+    if (networkType == 5) {
+      node2LinkCount = { };
+      visibleNodes.forEach(function(n) {
+        node2LinkCount[n.hprd_id] = 0;
+      });
+
+      visibleLinks.forEach(function(l) {
+        node2LinkCount[l.interactor_1_hprd_id] += 1;
+        node2LinkCount[l.interactor_2_hprd_id] += 1;
+      });
+
+      var ReducedVisibleNodes = [];
+      visibleNodes.forEach(function(n) {
+        if (node2LinkCount[n.hprd_id] > 1) {
+          ReducedVisibleNodes[ReducedVisibleNodes.length] = n;
+        }
+      });
+
+      var ReducedVisibleLinks = [];
+      visibleLinks.forEach(function(l) {
+        if (node2LinkCount[l.interactor_1_hprd_id] > 1 && node2LinkCount[l.interactor_2_hprd_id] > 1) {
+          ReducedVisibleLinks[ReducedVisibleLinks.length] = l;
+        }
+      });
+
+      nodeId2Index = { };
+      nodeIdx = 0;
+      for (var i = 0; i < ReducedVisibleNodes.length; i++) {
+        var n = ReducedVisibleNodes[i];
+        nodeId2Index[n.hprd_id] = nodeIdx;
+        ++nodeIdx;
+      };
+  
+      for (var i = 0; i < ReducedVisibleLinks.length; i++) {
+        var l = ReducedVisibleLinks[i];
+        l.source = nodeId2Index[l.interactor_1_hprd_id];
+        l.target = nodeId2Index[l.interactor_2_hprd_id];
+      };
+  
+      VisualizePPI(ReducedVisibleNodes, ReducedVisibleLinks);
+    }
+    else {
+      VisualizePPI(visibleNodes, visibleLinks);
+    }
+
   });
 }

@@ -13,7 +13,7 @@ function VisualizeCustomNetwork(nodes, links)
       .enter().append("svg:line")
       .attr("class", "link")
       .style("stroke", "#999")
-      .style("stroke-width", function(d) { return Math.sqrt(d.value); })
+      .style("stroke-width", function(d) { return 2; })
       .attr("x1", function(d) { return d.source.x; })
       .attr("y1", function(d) { return d.source.y; })
       .attr("x2", function(d) { return d.target.x; })
@@ -25,8 +25,8 @@ function VisualizeCustomNetwork(nodes, links)
       .attr("class", "node")
       .attr("cx", function(d) { return d.x; })
       .attr("cy", function(d) { return d.y; })
-      .attr("r", 5)
-      .style("fill", function(d) { return fill(d.group); })
+      .attr("r", 10)
+      .style("fill", function(d) { return fill(d.index); })
       .call(force.drag);
 
   node.append("svg:title")
@@ -46,6 +46,10 @@ function VisualizeCustomNetwork(nodes, links)
     node.attr("cx", function(d) { return d.x; })
         .attr("cy", function(d) { return d.y; });
   });
+
+  if (doAnimation) {
+    AnimateNetwork(nodes, links);
+  }
 }
 
 function loadCustomJSON(fileName)
@@ -65,12 +69,12 @@ function loadCustomCSV(fileName)
   d3.csv(fileName, function(links) {
     var nodes = {};
 
-    var first = d3.entries(links[0])[0].key;
+    var first  = d3.entries(links[0])[0].key;
     var second = d3.entries(links[0])[1].key;
 
     // Compute the distinct nodes from the links.
     links.forEach(function(link) {
-        link.source = nodes[link[first]] || (nodes[link[first]] = {name: link[first]});
+        link.source = nodes[link[first]]  || (nodes[link[first]] = {name: link[first]});
         link.target = nodes[link[second]] || (nodes[link[second]] = {name: link[second]});
         link.value  = 1;
     });
@@ -82,79 +86,94 @@ function loadCustomCSV(fileName)
 
 function loadCustomTSV(fileName)
 {
+
   resetGraphics();
-  d3.tsv(fileName, function(error, links) {
+  d3.tsv(fileName, function(links) {
     var nodes = {};
 
-    var first = d3.entries(links[0])[0].key;
+    var first  = d3.entries(links[0])[0].key;
     var second = d3.entries(links[0])[1].key;
 
+    // Compute the distinct nodes from the links.
     links.forEach(function(link) {
-	link.source = nodes[link[first]] || (nodes[link[first]] = {name: link[first]});
+        link.source = nodes[link[first]]  || (nodes[link[first]] = {name: link[first]});
         link.target = nodes[link[second]] || (nodes[link[second]] = {name: link[second]});
-	link.value  = 1;
+        link.value  = 1;
     });
+
     document.title = "Custom TSV network" + fileName;
     VisualizeCustomNetwork(d3.values(nodes), links);
   });
 }
 
+
 function loadCustomCytoscapeSIF(fileName)
 {
-    resetGraphics();
-    d3.text(fileName, function(text) {
-       var lines = d3.csv.parseRows(text).map(function(row) { return row; });
-       
-       var nodes = {};
-       var links = {};
-
-       for (var i = 0; i < lines.length; i++) {
-	   var line = lines[i][0];
-	   var words = line.split(/\s+/g);
-	   var p1 = words[0];
-	   var p2 = words[2];
-	   
-	   if (!nodes[p1]) nodes[p1] = {name: p1};
-	   if (!nodes[p2]) nodes[p2] = {name: p2};
-
-	   links[i] = {source: nodes[p1], target: nodes[p2]};
-	   links[i].value = 1;
-       }
-
-       document.title = "Custom Cytoscape SIF  network" + fileName;
-       VisualizeCustomNetwork(d3.values(nodes), d3.values(links));
+  resetGraphics();
+  d3.text(fileName, function(text) {
+    var lines = d3.csv.parseRows(text).map(function(row) {
+      return row;
     });
+
+    var nodes = {};
+    var links = {};
+
+    for (var i = 0; i < lines.length; i++) {
+      var line  = lines[i][0];
+      var words = line.split(/\s+/g);
+      var p1 = words[0];
+      var p2 = words[2];
+
+      if (!nodes[p1]) nodes[p1] = {name: p1};
+      if (!nodes[p2]) nodes[p2] = {name: p2};
+
+      links[i]  = {source: nodes[p1], target: nodes[p2]};
+      links[i].value  = 1;
+    }
+
+    document.title = "Custom Cytoscape SIF network" + fileName;
+    VisualizeCustomNetwork(d3.values(nodes), d3.values(links));
+  });
 }
 
-function loadCustomTXT(fileName)
+
+function loadCustomTxt(fileName)
 {
-    resetGraphics();
-    d3.text(fileName, function(text) {
-       var lines = d3.csv.parseRows(text).map(function(row) { return row; });
-       
-       var nodes = {};
-       var links = {};
-
-       for (var i = 0; i < lines.length; i++) {
-	   var line = lines[i][0];
-	   var words = line.split(/\s+/g);
-	   var p1 = words[0];
-	   var p2 = words[1];
-	   
-	   if (!nodes[p1]) nodes[p1] = {name: p1};
-	   if (!nodes[p2]) nodes[p2] = {name: p2};
-
-	   links[i] = {source: nodes[p1], target: nodes[p2]};
-	   links[i].value = 1;
-       }
-
-       document.title = "Custom Text network" + fileName;
-       VisualizeCustomNetwork(d3.values(nodes), d3.values(links));
+  resetGraphics();
+  d3.text(fileName, function(text) {
+    var lines = d3.csv.parseRows(text).map(function(row) {
+      return row;
     });
+
+    var nodes = {};
+    var links = {};
+
+    for (var i = 0; i < lines.length; i++) {
+      var line  = lines[i][0];
+      var words = line.split(/\s+/g);
+      var p1 = words[0];
+      var p2 = words[1];
+
+      if (!nodes[p1]) nodes[p1] = {name: p1};
+      if (!nodes[p2]) nodes[p2] = {name: p2};
+
+      links[i]  = {source: nodes[p1], target: nodes[p2]};
+      links[i].value  = 1;
+    }
+
+    document.title = "Custom Text network" + fileName;
+    VisualizeCustomNetwork(d3.values(nodes), d3.values(links));
+  });
 }
+
 
 function loadCustomNetwork(fileName)
 {
+  if (fileName == "") {
+    console.log("No custom network file provided");
+    return;
+  }
+
   var extension = fileName.split('.').pop();
 
   if (extension == "json") {
@@ -167,10 +186,10 @@ function loadCustomNetwork(fileName)
     loadCustomTSV(fileName);
   }
   else if (extension == "sif") {
-      loadCustomCytoscapeSIF(fileName);
+    loadCustomCytoscapeSIF(fileName);
   }
   else if (extension == "txt") {
-      loadCustomTXT(fileName);
+    loadCustomTxt(fileName);
   }
   else {
     console.log("Unsupported network file extension");

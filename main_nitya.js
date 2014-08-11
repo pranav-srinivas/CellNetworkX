@@ -153,11 +153,11 @@ $('#ExpressionData').click( function() {
 $('#ShowNetwork').click( function() {
   showNetwork();
 });
-
+/**
 $('#Animation').click( function() {
   doAnimation();
 });
-
+*/
 $('#Back').click( function() {
   goBack();
 });

@@ -90,12 +90,24 @@ function VisualizeKeggFixed(nodes, links)
       .call(force.drag);
 
   node.append("text")
-      .text(function(d) {
+      .text(function(d) { if(d.type == "gene"){
+        var substring = d.graphics.name;
+        var geneName= substring.substr(0, substring.indexOf(','));
+        return geneName;
+      } else {
         return d.graphics.name;
-  });
+      }
+     });
 
   node.append("svg:title")
-      .text(function(d) { return d.graphics.name; });
+      .text(function(d) { if(d.type == "gene"){
+        var substring = d.graphics.name;
+        var geneName= substring.substr(0, substring.indexOf(','));
+        return geneName;
+      } else {
+        return d.graphics.name;
+      }
+     });
 
   node.on("mouseover", function(d) {
     d3.select(this).style("fill", "red");
@@ -163,7 +175,14 @@ function VisualizeKeggFloating(nodes, links)
       .call(force.drag);
 
   node.append("svg:title")
-      .text(function(d) { return d.graphics.name; });
+      .text(function(d) { if(d.type == "gene"){
+        var nodeString = d.graphics.name;
+        var geneName = nodeString.substr(0, nodeString.indexOf(','));
+        return geneName;
+      } else {
+        return d.graphics.name;
+      }
+    });
 
   node.on("mouseover", function(d) {
     d3.select(this).style("fill", "red");
@@ -173,7 +192,7 @@ function VisualizeKeggFloating(nodes, links)
     d3.select(this).style("fill", function(d) { return fill(d.id); });
   });
 
-  node.on(   "click", function(d) { showDetail(d); });
+  node.on("click", function(d) { showDetail(d); });
   node.on("dblclick", function(d) { showDetail(d); });
 
   link.append("svg:title").text(function(d) { return linkType(d); });
@@ -226,7 +245,7 @@ function loadKeggJSON(fileName)
     }
   });
 }
-
+/**
 var linkedByIndex = {};
         links.forEach(function(d) {
             linkedByIndex[d.source.index + "," + d.target.index] = 1;
@@ -265,4 +284,5 @@ function doAnimation(d){
   }
 
 }
+*/
 

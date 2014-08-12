@@ -98,12 +98,24 @@ function VisualizeKeggFixed(nodes, links)
       .call(force.drag);
 
   node.append("text")
-      .text(function(d) {
+      .text(function(d) { if(d.type == "gene"){
+        var substring = d.graphics.name;
+        var geneName= substring.substr(0, substring.indexOf(','));
+        return geneName;
+      } else {
         return d.graphics.name;
-  });
+      }
+     });
 
   node.append("svg:title")
-      .text(function(d) { return d.graphics.name; });
+      .text(function(d) { if(d.type == "gene"){
+        var substring = d.graphics.name;
+        var geneName= substring.substr(0, substring.indexOf(','));
+        return geneName;
+      } else {
+        return d.graphics.name;
+      }
+     });
 
   node.on("mouseover", function(d) {
     d3.select(this).style("fill", "red");
@@ -176,7 +188,14 @@ function VisualizeKeggFloating(nodes, links)
       .call(force.drag);
 
   node.append("svg:title")
-      .text(function(d) { return d.graphics.name; });
+      .text(function(d) { if(d.type == "gene"){
+        var nodeString = d.graphics.name;
+        var geneName = nodeString.substr(0, nodeString.indexOf(','));
+        return geneName;
+      } else {
+        return d.graphics.name;
+      }
+    });
 
   node.on("mouseover", function(d) {
     d3.select(this).style("fill", "red");

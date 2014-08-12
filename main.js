@@ -250,6 +250,7 @@ function showNetwork()
   }
   else if (networkType == 3 || networkType == 4) {
     loadKeggJSON(currKeggFileName);
+    currNode = null;
   }
 }
 

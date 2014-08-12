@@ -6,7 +6,9 @@ var interval = 2000; // two second
 
 var animScale;
 var animNodes;
-var currNode;
+var currNode = null;
+var n;
+var l;
 
 var minRadius = 5;
 var maxRadius = 20;
@@ -29,7 +31,7 @@ function DetermineRadius()
 function AnimateNetwork(nodes, links)
 {
   if (numberOfSeries == 0) return;
-
+  currNode = null;
   DetermineRadius();
 
   animScale = d3.scale.linear()
@@ -53,9 +55,12 @@ function AnimateNetwork(nodes, links)
 
   TimeStepIndex = 0;
   animNodes = nodes;
+  n = nodes;
+  l = links;
 
   d3.timer(AnimateOneTimeStep(), interval);
 }
+
 
 
 var AnimateOneTimeStep = function() {
@@ -106,8 +111,51 @@ var AnimateOneTimeStep = function() {
                return fill(d.hprd_id);
              }
              else if (networkType == 3 || networkType == 4) {
-
-               return fill(d.id);
+               var colorNode;
+               console.log(currNode);
+               if (currNode == null){
+                 for (var i = 0; i < n.length; i++){
+                   if (n[i].type == "gene"){
+                     currNode = n[i];
+                     console.log(currNode.type);
+                     console.log(currNode);
+                     break;
+                   }
+                 }
+               }
+               colorNode = currNode;
+               console.log(colorNode);
+               var breakLoop = false;
+               for (var i = 0; i < l.length; i++){
+                 for (var j = 0; j < n.length; j++){
+                   if(l[i].entry1 == colorNode.id && l[i].entry2 == n[j].id){
+                     currNode = n[j];
+                     breakLoop = true;
+                     break;
+                   } else if (i == l.length - 1 && j == j.length - 1){
+                     var random = Math.floor(Math.random() * n.length);
+                     if(n[random].type == "gene"){
+                       currNode = n[random];
+                       console.log(n[random]);
+                       console.log(currNode.type);
+                       breakLoop = true;
+                     } else {
+                       random = Math.floor(Math.random() * n.length);
+                       currNode = n[random];
+                       console.log(currNode.type);
+                       breakLoop = true;
+                     }
+                   }
+                 }
+                 if(breakLoop){
+                   break;
+                 }
+               }
+               if (d == colorNode){
+                 return "black";
+               } else {
+                 return fill(d.id);
+               }
              }
              return fill(d.index);
            });
@@ -129,6 +177,7 @@ function performAnimation()
 {
   if (doAnimation) {
     TimeStepIndex = 0;
+    currNode = null;
     d3.timer(AnimateOneTimeStep(), interval);
   }
   else {

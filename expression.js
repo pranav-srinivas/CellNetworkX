@@ -30,7 +30,7 @@ function computeMinMaxExprValue()
 
   for (var i = 0; i < numberOfSeries; ++i) {
     for (var j = 0; j < numberOfDataPoint; ++j) {
-	sum = myExpressions[i][j] + sum; 
+	sum = myExpressions[i][j] + sum;
       if (myExpressions[i][j] < minExprValue) {
         minExprValue = myExpressions[i][j];
       }

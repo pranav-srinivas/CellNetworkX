@@ -6,6 +6,7 @@ var interval = 2000; // two second
 
 var animScale;
 var animNodes;
+var currNode;
 
 var minRadius = 5;
 var maxRadius = 20;
@@ -100,11 +101,12 @@ var AnimateOneTimeStep = function() {
              return 10;
            })
          .style("stroke-width", 2)
-         .style("fill", function(d) { 
+         .style("fill", function(d) {
              if (networkType == 2 || networkType == 5) {
                return fill(d.hprd_id);
              }
              else if (networkType == 3 || networkType == 4) {
+
                return fill(d.id);
              }
              return fill(d.index);

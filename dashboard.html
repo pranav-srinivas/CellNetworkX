@@ -8,7 +8,7 @@
     <meta name="author" content="">
     <link rel="icon" href="../../favicon.ico">
 
-    <title>Envision Dashboard </title>
+    <title>Protein X</title>
 
     <!-- Bootstrap core CSS -->
     <link rel="stylesheet" type="text/css" href="./CSS/styles.css"/>
@@ -31,8 +31,7 @@
     <![endif]-->
   </head>
 
-  <div id="chart">
-  </div>
+  <div id="chart"></div>
 
   <style type="text/css">
         .activeBN {
@@ -42,12 +41,28 @@
             background-color: orange;
         }
   </style>
-  </style>
 
   <body>
 
   <script src="./JS/bootstrap.min.js"></script>
-
+    <!-- Modal -->
+    <div class="modal fade" id="myModal" tabindex="-1" role=".modeldialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Help and Instructions</h4>
+                </div>
+                <div class="modal-body">
+                    Hi everyone...... I really love Protein X because it is really pretty. Over here I shall explain how to use this lovely
+                    protein X. MHHMMMM. Made by 4 lovely teenagers.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
       <div class="container-fluid">
         <div class="navbar-header">
@@ -57,7 +72,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#">Envision X</a>
+          <a class="navbar-brand" href="#">Protein X</a>
         </div>
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
@@ -91,7 +106,8 @@
             </li>
 
 
-            <li><a id="Help" href="#">Help</a></li>
+            <!-- Button trigger modal -->
+            <li><a id="help" type="button" data-toggle="modal" data-target="#myModal">Help</a></li>
           </ul>
         </div>
       </div>
@@ -100,16 +116,14 @@
   <input type="file" id="networkFile" style="display: none;" />
   <input type="file" id="expressionFile" style="display: none;" />
 
-  <script type="text/javascript" src="/Users/Pranav/documents/D3/d3.js"></script>
+  <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
   <script type="text/javascript" src="custom.js"></script>
-  <script type="text/javascript" src="kegg.js"></script> 
+  <script type="text/javascript" src="kegg.js"></script>
   <script type="text/javascript" src="ppi.js"></script>
   <script type="text/javascript" src="animation.js"></script>
   <script type="text/javascript" src="expression.js"></script>
   <script type="text/javascript" src="chart.js"></script>
   <script type="text/javascript" src="main.js"></script>
-
-  <script src="./JS/bootstrap.min.js"></script>
 
 </body>
 

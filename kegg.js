@@ -1,4 +1,4 @@
-function marker (val, color) 
+function marker (val, color)
 {
   var refx = 20;
   if (networkType == 3) {
@@ -7,7 +7,7 @@ function marker (val, color)
 
   vis.append("svg:defs").selectAll("marker")
         .data([val])
-        .enter().append("svg:marker")    
+        .enter().append("svg:marker")
         .attr("id", String)
         .attr("viewBox", "0 -5 10 10")
         .attr("refX", refx)

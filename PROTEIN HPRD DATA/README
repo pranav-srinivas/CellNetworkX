@@ -1,0 +1,69 @@
+
+#########################################################################
+#                                                                       #
+#  Human Protein Reference Database                                     #
+#                                                                       #
+#  Copyright (C) 2002-09, Johns Hopkins University and                  #
+#                         The Institute of Bioinformatics.              #
+#                                                                       #
+#  This code is licensed under the GNU Lesser General Public License.   #
+#  See the file LICENSE or this URL for the full text of the license:   #
+#  http://www.gnu.org/licenses/lgpl.html                                #
+#                                                                       #
+#########################################################################
+
+Number of files = 13
+
+1. PROTEIN_ARCHITECTURE.txt
+
+hprd_id,isoform_id,refseq_id,geneSymbol,architecture_name,architecture_type,start_site,end_site,reference_type,reference_id
+
+2. GENETIC_DISEASES.txt
+
+hprd_id,geneSymbol,refseq_id,disease_name,reference_id
+
+3. TISSUE_EXPRESSIONS.txt
+
+hprd_id,refseq_id,geneSymbol,expression_term,status,reference_id
+
+4. GENE_ONTOLOGY.txt
+
+hprd_id,isoform_id,refseq_id,geneSymbol,isoform_specifity_status,molecular_function_term,molecular_function_reference_id,biological_process_term,biological_process_reference_id,cellular_component_term,cellular_component_reference_id
+
+5. SEQUENCE_INFORMATION.txt
+
+hprd_id,isoform_id,geneSymbol,nucleotide_accession,orf_start,orf_end,protein_accession,protein_length,protein_molecular_weight
+
+6. HPRD_ID_MAPPINGS.txt
+
+hprd_id,geneSymbol,nucleotide_accession,protein_accession,entrezgene_id,omim_id,swissprot_id,main_name
+
+7. NUCLEOTIDE_SEQUENCES.txt
+
+FASTA Format
+
+8. PROTEIN_SEQUENCES.txt
+
+FASTA Format
+
+
+9. BINARY_PROTEIN_PROTEIN_INTERACTIONS.txt
+
+interactor_1_geneSymbol,interactor_1_hprd_id,interactor_1_refseq_id,interactor_2_geneSymbol,interactor_2_hprd_id,interactor_2_refseq_id,experiment_type,reference_id
+
+10. BINARY_PROTEIN_NONPROTEIN_INTERACTIONS.txt
+
+interactor_geneSymbol,interactor_hprd_id,interactor_refseq_id,non_protein_interactor_name,experiment_type,reference_id
+
+11. PROTEIN_COMPLEXES.txt
+
+hprd_interaction_id,interactor_hprd_id,interactor_geneSymbol,interactor_refseq_id,experiment_type,reference_id
+
+12. PROTEIN_NOMENCLATURE.txt
+
+hprd_id,geneSymbol,refseq_id,all_nomenclature(separated by semi-colon)
+
+13. POST_TRANSLATIONAL_MODIFICATIONS.txt
+substrate_hprd_id,substrate_gene_symbol,substrate_isoform_id,substrate_refseq_id,site,residue,enzyme_name,enzyme_hprd_id,modification_type,experiment_type,reference_id
+
+                

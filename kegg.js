@@ -1,55 +1,63 @@
-function marker (val, color)
+function marker (val, color) 
 {
-    var refx = 20;
-    if (networkType == 3) {
-	refx = refx + 2*r;
-    }
+  var refx = 20;
+  if (networkType == 3) {
+    refx = refx + r/2;
+  }
 
-    vis.append("svg:defs").selectAll("marker")
-	.data([val])
-	.enter().append("svg:marker")
-	.attr("id", String)
-	.attr("viewBox", "0 -5 10 10")
-	.attr("refX", refx)
-	.attr("refY", 0)
-	.attr("markerWidth", 6)
-	.attr("markerHeigth", 6)
-	.attr("orient", "auto")
-	.style("fill", color)
-	.append("svg:path")
-	.attr("d", "M0,-5L10,0L0,5");
+  vis.append("svg:defs").selectAll("marker")
+        .data([val])
+        .enter().append("svg:marker")    
+        .attr("id", String)
+        .attr("viewBox", "0 -5 10 10")
+        .attr("refX", refx)
+        .attr("refY", 0)
+        .attr("markerWidth", 6)
+        .attr("markerHeight", 6)
+        .attr("orient", "auto")
+        .style("fill", color)
+        .append("svg:path")
+        .attr("d", "M0,-5L10,0L0,5");
 
-    return "url(#" +val+ ")";
+  return "url(#" +val+ ")";
 }
 
 function getMarker(d)
 {
-    if (!("subtype" in d) || !("name" in d.subtype)) return marker("unknown", "pink");
-    if (d.subtype.name == "activation")            return marker("activation", "green");
-    if (d.subtype.name == "inhibition")            return marker("inhibition", "red");
-    if (d.subtype.name == "phosphorylation")       return marker("phosphorylation", "yellow");
-    if (d.subtype.name == "expression")            return marker("expression", "blue");
-    if (d.subtype.name == "binding/association")   return marker("binding", "lightgreen");
-    if (d.subtype.name == "missing interaction")   return marker("missing", "black");
-    return marker("default", "cyan");
+  if (!("subtype" in d) || !("name" in d.subtype)) return marker("unknown", "pink");
+  if (d.subtype.name == "activation")          return marker("activation", "green");
+  if (d.subtype.name == "inhibition")          return marker("inhibition", "red");
+  if (d.subtype.name == "phosphorylation")     return marker("phosphorylation", "yellow");
+  if (d.subtype.name == "dephosphorylation")   return marker("dephosphorylation", "magenta");
+  if (d.subtype.name == "expression")          return marker("expression", "blue");
+  if (d.subtype.name == "binding/association") return marker("binding", "lightgreen");
+  if (d.subtype.name == "missing interaction") return marker("missing", "black");
+  if (d.subtype.name == "repression")          return marker("repression", "orange");
+  if (d.subtype.name == "dissociation")        return marker("dissociation", "gray");
+
+  return marker("default", "cyan");
 }
 
 function getStyle(d)
 {
-    if (!("subtype" in d) || !("name" in d.subtype)) return "pink";
-    if (d.subtype.name == "activation")            return "green";
-    if (d.subtype.name == "inhibition")            return "red";
-    if (d.subtype.name == "phosphorylation")       return "yellow";
-    if (d.subtype.name == "expression")            return "blue";
-    if (d.subtype.name == "binding/association")   return "lightgreen";
-    if (d.subtype.name == "missing interaction")   return "black";
-    return "cyan";
+  if (!("subtype" in d) || !("name" in d.subtype)) return "pink";
+  if (d.subtype.name == "activation")          return "green";
+  if (d.subtype.name == "inhibition")          return "red";
+  if (d.subtype.name == "phosphorylation")     return "yellow";
+  if (d.subtype.name == "dephosphorylation")   return "magenta";
+  if (d.subtype.name == "expression")          return "blue";
+  if (d.subtype.name == "binding/association") return "lightgreen";
+  if (d.subtype.name == "missing interaction") return "black";
+  if (d.subtype.name == "repression")          return "orange";
+  if (d.subtype.name == "dissociation")        return "gray";
+
+  return "cyan";
 }
 
 function linkType(d)
 {
-    if (!("subtype" in d) || !("name" in d.subtype)) return "unknown";
-    return d.subtype.name;
+  if (!("subtype" in d) || !("name" in d.subtype)) return "unknown";
+  return d.subtype.name;
 }
 
 function VisualizeKeggFixed(nodes, links)
@@ -125,6 +133,10 @@ function VisualizeKeggFixed(nodes, links)
         .attr("y", function(d) { return d.graphics.y; });
 
   });
+
+  if (doAnimation) {
+    AnimateNetwork(nodes, links);
+  }
 }
 
 
@@ -143,7 +155,7 @@ function VisualizeKeggFloating(nodes, links)
       .enter().append("svg:line")
       .attr("class", "link")
       .style("stroke", function(d) { return getStyle(d); })
-      .attr("marker-end", function(d) { return getMarker(d); })  
+      .attr("marker-end", function(d) { return getMarker(d); })
       .style("stroke-width", function(d) { return Math.sqrt(d.value); })
       .attr("x1", function(d) { return d.source.x; })
       .attr("y1", function(d) { return d.source.y; })
@@ -194,13 +206,23 @@ function VisualizeKeggFloating(nodes, links)
     node.attr("cy", function(d) { return d.y; });
 
   });
+
+  if (doAnimation) {
+    AnimateNetwork(nodes, links);
+  }
 }
 
 
 function loadKeggJSON(fileName)
 {
-  resetGraphics();
-  d3.json(fileName, function(data) {
+  d3.json(fileName, function(error, data) {
+    if (error) {
+      console.log("File not found " + fileName);
+      return;
+    }
+
+    resetGraphics();
+
     var nodes = data.pathway.entry;
     var links = data.pathway.relation;
 

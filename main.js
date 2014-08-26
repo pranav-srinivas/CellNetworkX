@@ -33,13 +33,13 @@ function redraw() {
 }
 
 
-var currFileName = "kegg.json";
-var prevFileName    = [ ];
-
 var     expressionFileName = "";
 var  customNetworkFileName = "";
 var  backgroundPPIFileName = "BackgroundPPI.json";
 var backgroundKEGGFileName = "KEGG.json";
+
+var currKeggFileName = backgroundKEGGFileName;
+var prevKeggFileName    = [ ];
 
 var visiblePPIProteins = ["KRAS", "MTOR", "BRAF", "PTEN"];
 
@@ -48,14 +48,17 @@ var fullExpressionPathName = "";
 
 //----------------------------------------------------------
 // Type of Network:   1: Custom Network
-//                    2: PPI Background Network
-//                    3: KEGG Background Network floating
-//                    4: KEGG Background Network fixed 
+//                    2: PPI Network
+//                    3: KEGG Floating Network
+//                    4: KEGG Fixed Network
+//                    5: PPI Reduced Network
 //----------------------------------------------------------
 var networkType = 2;
-$("#PPI").addClass("activeBN");
+$("#PPI1").addClass("activeBN");
 
-var BNpressed = 0;
+var chartType = 0;
+
+$("a.dropdown-toggle").dropdown();
 
 //----------------------------------------------------------
 // Navigation Bar Processing
@@ -63,61 +66,89 @@ var BNpressed = 0;
 
 function DeselectAllBN()
 {
-    $("#PPI").removeClass("activeBN");
-    $("#KBN1").removeClass("activeBN");
-    $("#KBN2").removeClass("activeBN");
-    $("#NONE").removeClass("activeBN");
+      $("#PPI1").removeClass("activeBN");
+      $("#PPI2").removeClass("activeBN");
+      $("#KBN1").removeClass("activeBN");
+      $("#KBN2").removeClass("activeBN");
+      $("#NONE").removeClass("activeBN");
+}
+
+function DeselectAllCH()
+{
+      $("#BC").removeClass("activeCH");
+      $("#LC").removeClass("activeCH");
 }
 
 $(document).ready(function() {
     $('#networkFile').change(function(evt) {
+        var f = evt.target.files[0];
         fullNetworkPathName = ($(this).val());
         customNetworkFileName = fullNetworkPathName.split(/(\\|\/)/g).pop()
         networkType = 1;
-	DeselectAllBN();
-	$("#NONE").addClass("activeBN");
+        DeselectAllBN();
+        doAnimation = false;
+        $("#NONE").addClass("activeBN");
     });
 
     $('#expressionFile').change(function(evt) {
         fullExpressionPathName = ($(this).val());
         expressionFileName = fullExpressionPathName.split(/(\\|\/)/g).pop()
-	loadExpressionData(expressionFileName);
+        loadExpressionData(expressionFileName);
+        doAnimation = false;
     });
 
     $("a.dropdown-toggle").click(function(evt) {
-	    if (BNpressed == 0) {
-		$("a.dropdown-toggle").dropdown("toggle");
-		BNpressed = 1;
-	    }
-	    else
-		$("a.dropdown-toggle").dropdown();
+      $("a.dropdown-toggle").dropdown();
     });
 
     $("ul.dropdown-menu a").click(function(evt) {
-	    $("a.dropdown-toggle").dropdown();
+      $("a.dropdown-toggle").dropdown();
+      doAnimation = false;
 
-	    DeselectAllBN();
+      var menuText = this.innerText;
 
-	    var menuText = this.innerText;
-	    if (menuText == "PPI Background Network") {
-		networkType = 2;
-		$("#PPI").addClass("activeBN");
-	    }
-	    else if (menuText == "KEGG Background Network 1") {
-		networkType = 3;
-		currFileName = backgroundKEGGFileName;
-		$("#KBN1").addClass("activeBN");
-	    }
-	    else if (menuText == "KEGG Background Network 2") {
-		networkType = 4;
-		currFileName = backgroundKEGGFileName;
-		$("#KBN2").addClass("activeBN");
-	    }
-	    else if (menuText == "No Background Network") {
-		networkType = 1;
-		$("#NONE").addClass("activeBN");
-	    }
-   });
+      if (menuText == "PPI Network") {
+        networkType = 2;
+        DeselectAllBN();
+        $("#PPI1").addClass("activeBN");
+      }
+      else if (menuText == "PPI Reduced Network") {
+        networkType = 5;
+        DeselectAllBN();
+        $("#PPI2").addClass("activeBN");
+      }
+      else if (menuText == "KEGG Floating Network") {
+        networkType = 3;
+        currKeggFileName = backgroundKEGGFileName;
+        DeselectAllBN();
+        $("#KBN1").addClass("activeBN");
+      }
+      else if (menuText == "KEGG Fixed Network") {
+        networkType = 4;
+        currKeggFileName = backgroundKEGGFileName;
+        DeselectAllBN();
+        $("#KBN2").addClass("activeBN");
+      }
+      else if (menuText == "No Background Network") {
+        networkType = 1;
+        DeselectAllBN();
+        $("#NONE").addClass("activeBN");
+      }
+      else if (menuText == "Bubble Chart") {
+        chartType = 1;
+        DeselectAllCH();
+        $("#BC").addClass("activeCH");
+        DisplayChart();
+      }
+      else if (menuText == "Line Chart") {
+        chartType = 2;
+        DeselectAllCH();
+        $("#LC").addClass("activeCH");
+        DisplayChart();
+      }
+      
+
+    });
 
 });
 
@@ -131,46 +162,20 @@ $('#ExpressionData').click( function() {
 });
 
 $('#ShowNetwork').click( function() {
+  chartType = 0;
+  doAnimation = false;
   showNetwork();
 });
 
 $('#Animation').click( function() {
-  doAnimation();
+  performAnimation();
 });
 
 
 $('#Back').click( function() {
+  doAnimation = false;
   goBack()();
 });
-
-selectBackgroundNetwork = function(value)
-{
-    if (value == "PPI") {
-      selectPPI();
-    }
-    else if (value == "KEGGfloating") {
-      selectKEGGfloating();
-    }
-    else if (value == "KEGGfixed") {
-      selectKEGGfixed();
-    }
-}
-
-function selectPPI()
-{
-  networkType = 2;
-}
-
-function selectKEGGfloating()
-{
-  networkType = 3;
-}
-
-function selectKEGGfixed()
-{
-  networkType = 4;
-}
-
 
 
 function resetGraphics()
@@ -195,23 +200,23 @@ function resetGraphics()
 
 function goBack()
 {
-  if (networkType == 1 || networkType == 2) return;
-  if (prevFileName.length == 0) return;
-  var idx = prevFileName.length - 1;
-  currFileName = prevFileName[idx];
-  prevFileName.splice(idx, 1);
-  loadKeggJSON(currFileName);
+  if (networkType == 1 || networkType == 2 || networkType == 5) return;
+  if (prevKeggFileName.length == 0) return;
+  var idx = prevKeggFileName.length - 1;
+  currKeggFileName = prevKeggFileName[idx];
+  prevKeggFileName.splice(idx, 1);
+  loadKeggJSON(currKeggFileName);
 }
 
 function showDetail(d)
 {
-  if (networkType == 1 || networkType == 2) return;
+  if (networkType == 1 || networkType == 2 || networkType == 5) return;
   if (d.type == "map") {
     var mapName = d.name;
-    var idx = prevFileName.length;
-    prevFileName[idx] = currFileName;
-    currFileName = mapName.substr(5) + ".json";
-    loadKeggJSON(currFileName);
+    var idx = prevKeggFileName.length;
+    prevKeggFileName[idx] = currKeggFileName;
+    currKeggFileName = mapName.substr(5) + ".json";
+    loadKeggJSON(currKeggFileName);
   }
 }
 
@@ -220,11 +225,11 @@ function showNetwork()
   if (networkType == 1) {
     loadCustomNetwork(customNetworkFileName);
   }
-  else if (networkType == 2) {
+  else if (networkType == 2 || networkType == 5) {
     loadPpiJSON(expressionFileName);
   }
   else if (networkType == 3 || networkType == 4) {
-    loadKeggJSON(currFileName);
+    loadKeggJSON(currKeggFileName);
   }
 }
 

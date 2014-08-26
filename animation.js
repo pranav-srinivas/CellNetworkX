@@ -2,11 +2,7 @@ var TimeStepIndex = 0;
 var animationRadiusCount = 20;
 var doAnimation = false;
 var protein2Index = {};
-<<<<<<< HEAD
 var interval = 2000; // two second
-=======
-var interval = 1000; // one second
->>>>>>> FETCH_HEAD
 
 var animScale;
 var animNodes;
@@ -16,7 +12,6 @@ var maxRadius = 20;
 
 function DetermineRadius()
 {
-<<<<<<< HEAD
     minRadius = 5;
     maxRadius = 20;
 
@@ -28,19 +23,6 @@ function DetermineRadius()
 	minRadius = r;
 	maxRadius = 2 * R;
     }
-=======
-  minRadius = 5;
-  maxRadius = 20;
-
-  if (networkType == 2 || networkType == 5) {
-    minRadius = 10;
-    maxRadius = 40;
-  }
-  else if (networkType == 3 || networkType == 4) {
-    minRadius = r;
-    maxRadius = 2*R;
-  }
->>>>>>> FETCH_HEAD
 }
 
 function AnimateNetwork(nodes, links)
@@ -53,7 +35,6 @@ function AnimateNetwork(nodes, links)
                  .domain([minExprValue, avgExprValue])
                  .range([minRadius, maxRadius]);
 
-<<<<<<< HEAD
   // PPI
   if (networkType == 2 || networkType == 5) {
     animScale.range([10, 40]);
@@ -64,8 +45,6 @@ function AnimateNetwork(nodes, links)
     animScale.range([r, 2*R]);
   }
 
-=======
->>>>>>> FETCH_HEAD
   protein2Index = {};
   for (var i = 0; i < myProteins.length; i++) {
     protein2Index[ myProteins[i] ] = i;
@@ -109,11 +88,7 @@ var AnimateOneTimeStep = function() {
                var j = protein2Index[nodeName];
                var rad = animScale(myExpressions[i][j]);
                if (rad > maxRadius) return maxRadius;
-<<<<<<< HEAD
 	       return rad;
-=======
-               return rad;
->>>>>>> FETCH_HEAD
              }
 
              if (networkType == 1) return 10;
@@ -148,10 +123,6 @@ var AnimateOneTimeStep = function() {
     }
 };
 
-<<<<<<< HEAD
-=======
-
->>>>>>> FETCH_HEAD
 function performAnimation()
 {
   if (doAnimation) {

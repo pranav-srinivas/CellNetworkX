@@ -86,11 +86,7 @@ $(document).ready(function() {
         customNetworkFileName = fullNetworkPathName.split(/(\\|\/)/g).pop()
         networkType = 1;
         DeselectAllBN();
-<<<<<<< HEAD
         doAnimation = false;
-=======
-        doAnimation = false;;
->>>>>>> FETCH_HEAD
         $("#NONE").addClass("activeBN");
     });
 
@@ -98,11 +94,7 @@ $(document).ready(function() {
         fullExpressionPathName = ($(this).val());
         expressionFileName = fullExpressionPathName.split(/(\\|\/)/g).pop()
         loadExpressionData(expressionFileName);
-<<<<<<< HEAD
         doAnimation = false;
-=======
-        doAnimation = false;;
->>>>>>> FETCH_HEAD
     });
 
     $("a.dropdown-toggle").click(function(evt) {
@@ -111,11 +103,7 @@ $(document).ready(function() {
 
     $("ul.dropdown-menu a").click(function(evt) {
       $("a.dropdown-toggle").dropdown();
-<<<<<<< HEAD
       doAnimation = false;
-=======
-      doAnimation = false;;
->>>>>>> FETCH_HEAD
 
       var menuText = this.innerText;
 
@@ -175,11 +163,7 @@ $('#ExpressionData').click( function() {
 
 $('#ShowNetwork').click( function() {
   chartType = 0;
-<<<<<<< HEAD
   doAnimation = false;
-=======
-  doAnimation = false;;
->>>>>>> FETCH_HEAD
   showNetwork();
 });
 
@@ -189,11 +173,7 @@ $('#Animation').click( function() {
 
 
 $('#Back').click( function() {
-<<<<<<< HEAD
   doAnimation = false;
-=======
-  doAnimation = false;;
->>>>>>> FETCH_HEAD
   goBack()();
 });
 

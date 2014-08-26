@@ -3,13 +3,8 @@ var myExpressions = [];
 var numberOfSeries = 0;
 var numberOfDataPoint = 0;
 var minExprValue = 0;
-<<<<<<< HEAD
 var maxExprValue = 0;
 var avgExprValue = 0;
-=======
-var avgExprValue = 0;
-var maxExprValue = 0;
->>>>>>> FETCH_HEAD
 
 
 function resetExpressions()
@@ -17,13 +12,8 @@ function resetExpressions()
   delete myExpressions;
   myExpressions = [];
   minExprValue = 0;
-<<<<<<< HEAD
   maxExprValue = 0;
   avgExprValue = 0;
-=======
-  avgExprValue = 0;
-  maxExprValue = 0;
->>>>>>> FETCH_HEAD
   delete myProteins;
   myProteins = [];
 
@@ -33,7 +23,6 @@ function resetExpressions()
 
 
 function computeMinMaxExprValue()
-<<<<<<< HEAD
 {
   minExprValue = myExpressions[0][0];
   maxExprValue = myExpressions[0][0];
@@ -65,46 +54,8 @@ function loadExpressionCSV(fileName)
       var key = line[i].key;
       myNodes[key] = 1;
       myProteins[i] = key;
-=======
-{
-  minExprValue = myExpressions[0][0];
-  maxExprValue = myExpressions[0][0];
-
-  var sumExprValue = 0;
-
-  for (var i = 0; i < numberOfSeries; ++i) {
-    for (var j = 0; j < numberOfDataPoint; ++j) {
-      sumExprValue += myExpressions[i][j];
-      if (myExpressions[i][j] < minExprValue) {
-        minExprValue = myExpressions[i][j];
-      }
-      if (myExpressions[i][j] > maxExprValue) {
-        maxExprValue = myExpressions[i][j];
-      }
->>>>>>> FETCH_HEAD
-    }
-  }
-
-<<<<<<< HEAD
-=======
-  avgExprValue = sumExprValue / (numberOfSeries * numberOfDataPoint);
-}
-
-
-function loadExpressionCSV(fileName)
-{
-  d3.csv(fileName, function(lines) {
-
-    resetExpressions();
-
-    var line  = d3.entries(lines[0]);
-    for (var i = 0; i < line.length; i++) {
-      var key = line[i].key;
-      myNodes[key] = 1;
-      myProteins[i] = key;
     }
 
->>>>>>> FETCH_HEAD
     for (var i = 0; i < lines.length; i++) {
       var expr = d3.entries(lines[i]);
       var exprData = [];

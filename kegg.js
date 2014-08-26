@@ -1,4 +1,4 @@
-function marker (val, color)
+function marker (val, color) 
 {
   var refx = 20;
   if (networkType == 3) {
@@ -7,7 +7,7 @@ function marker (val, color)
 
   vis.append("svg:defs").selectAll("marker")
         .data([val])
-        .enter().append("svg:marker")
+        .enter().append("svg:marker")    
         .attr("id", String)
         .attr("viewBox", "0 -5 10 10")
         .attr("refX", refx)
@@ -98,24 +98,12 @@ function VisualizeKeggFixed(nodes, links)
       .call(force.drag);
 
   node.append("text")
-      .text(function(d) { if(d.type == "gene"){
-        var substring = d.graphics.name;
-        var geneName= substring.substr(0, substring.indexOf(','));
-        return geneName;
-      } else {
+      .text(function(d) {
         return d.graphics.name;
-      }
-     });
+  });
 
   node.append("svg:title")
-      .text(function(d) { if(d.type == "gene"){
-        var substring = d.graphics.name;
-        var geneName= substring.substr(0, substring.indexOf(','));
-        return geneName;
-      } else {
-        return d.graphics.name;
-      }
-     });
+      .text(function(d) { return d.graphics.name; });
 
   node.on("mouseover", function(d) {
     d3.select(this).style("fill", "red");
@@ -188,14 +176,7 @@ function VisualizeKeggFloating(nodes, links)
       .call(force.drag);
 
   node.append("svg:title")
-      .text(function(d) { if(d.type == "gene"){
-        var nodeString = d.graphics.name;
-        var geneName = nodeString.substr(0, nodeString.indexOf(','));
-        return geneName;
-      } else {
-        return d.graphics.name;
-      }
-    });
+      .text(function(d) { return d.graphics.name; });
 
   node.on("mouseover", function(d) {
     d3.select(this).style("fill", "red");

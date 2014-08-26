@@ -3,8 +3,8 @@ var myExpressions = [];
 var numberOfSeries = 0;
 var numberOfDataPoint = 0;
 var minExprValue = 0;
-var maxExprValue = 0;
 var avgExprValue = 0;
+var maxExprValue = 0;
 
 
 function resetExpressions()
@@ -12,8 +12,8 @@ function resetExpressions()
   delete myExpressions;
   myExpressions = [];
   minExprValue = 0;
-  maxExprValue = 0;
   avgExprValue = 0;
+  maxExprValue = 0;
   delete myProteins;
   myProteins = [];
 
@@ -26,11 +26,12 @@ function computeMinMaxExprValue()
 {
   minExprValue = myExpressions[0][0];
   maxExprValue = myExpressions[0][0];
-  var sum = 0;
+
+  var sumExprValue = 0;
 
   for (var i = 0; i < numberOfSeries; ++i) {
     for (var j = 0; j < numberOfDataPoint; ++j) {
-	sum = myExpressions[i][j] + sum;
+      sumExprValue += myExpressions[i][j];
       if (myExpressions[i][j] < minExprValue) {
         minExprValue = myExpressions[i][j];
       }
@@ -39,7 +40,8 @@ function computeMinMaxExprValue()
       }
     }
   }
-  avgExprValue = sum / (numberOfSeries * numberOfDataPoint);
+
+  avgExprValue = sumExprValue / (numberOfSeries * numberOfDataPoint);
 }
 
 

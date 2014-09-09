@@ -46,6 +46,21 @@ var visiblePPIProteins = ["KRAS", "MTOR", "BRAF", "PTEN"];
 var    fullNetworkPathName = "";
 var fullExpressionPathName = "";
 
+var    networkReader = new FileReader();
+var expressionReader = new FileReader();
+
+var networkText, expressionText;
+var networkExtension, expressionExtension;
+
+networkReader.onload = function(e) {
+  networkText = networkReader.result;
+}
+
+expressionReader.onload = function(e) {
+  expressionText = expressionReader.result;
+  loadExpressionData();
+}
+
 //----------------------------------------------------------
 // Type of Network:   1: Custom Network
 //                    2: PPI Network
@@ -82,19 +97,23 @@ function DeselectAllCH()
 $(document).ready(function() {
     $('#networkFile').change(function(evt) {
         var f = evt.target.files[0];
+        networkReader.readAsText(f);
         fullNetworkPathName = ($(this).val());
         customNetworkFileName = fullNetworkPathName.split(/(\\|\/)/g).pop()
+        networkExtension = customNetworkFileName.split('.').pop();
         networkType = 1;
         DeselectAllBN();
-        doAnimation = false;
+        doAnimation = false;;
         $("#NONE").addClass("activeBN");
     });
 
     $('#expressionFile').change(function(evt) {
+        var f = evt.target.files[0];
+        expressionReader.readAsText(f);
         fullExpressionPathName = ($(this).val());
         expressionFileName = fullExpressionPathName.split(/(\\|\/)/g).pop()
-        loadExpressionData(expressionFileName);
-        doAnimation = false;
+        expressionExtension = expressionFileName.split('.').pop();
+        doAnimation = false;;
     });
 
     $("a.dropdown-toggle").click(function(evt) {
@@ -103,7 +122,7 @@ $(document).ready(function() {
 
     $("ul.dropdown-menu a").click(function(evt) {
       $("a.dropdown-toggle").dropdown();
-      doAnimation = false;
+      doAnimation = false;;
 
       var menuText = this.innerText;
 
@@ -163,7 +182,7 @@ $('#ExpressionData').click( function() {
 
 $('#ShowNetwork').click( function() {
   chartType = 0;
-  doAnimation = false;
+  doAnimation = false;;
   showNetwork();
 });
 
@@ -173,7 +192,7 @@ $('#Animation').click( function() {
 
 
 $('#Back').click( function() {
-  doAnimation = false;
+  doAnimation = false;;
   goBack()();
 });
 
@@ -223,10 +242,10 @@ function showDetail(d)
 function showNetwork()
 {
   if (networkType == 1) {
-    loadCustomNetwork(customNetworkFileName);
+    loadCustomNetwork();
   }
   else if (networkType == 2 || networkType == 5) {
-    loadPpiJSON(expressionFileName);
+    loadPpiJSON();
   }
   else if (networkType == 3 || networkType == 4) {
     loadKeggJSON(currKeggFileName);

@@ -52,66 +52,77 @@ function VisualizeCustomNetwork(nodes, links)
   }
 }
 
-function loadCustomJSON(fileName)
+function loadCustomJSON()
 {
   resetGraphics();
-  d3.json(fileName, function(data) {
+  d3.json(customNetworkFileName, function(data) {
     var nodes = data.proteins;
     var links = data.interactions;
-    document.title = "Custom JSON network" + fileName;
+    document.title = "Custom JSON network" + customNetworkFileName;
     VisualizeCustomNetwork(nodes, links);
   });
 }
 
-function loadCustomCSV(fileName)
+function loadCustomCSV()
 {
   resetGraphics();
-  d3.csv(fileName, function(links) {
-    var nodes = {};
 
-    var first  = d3.entries(links[0])[0].key;
-    var second = d3.entries(links[0])[1].key;
-
-    // Compute the distinct nodes from the links.
-    links.forEach(function(link) {
-        link.source = nodes[link[first]]  || (nodes[link[first]] = {name: link[first]});
-        link.target = nodes[link[second]] || (nodes[link[second]] = {name: link[second]});
-        link.value  = 1;
-    });
-
-    document.title = "Custom CSV network" + fileName;
-    VisualizeCustomNetwork(d3.values(nodes), links);
+  var lines = d3.csv.parseRows(networkText).map(function(row) {
+    return row;
   });
+
+  var nodes = {};
+  var links = {};
+
+  for (var i = 1; i < lines.length; i++) {
+    var line  = lines[i];
+    var p1 = line[0];
+    var p2 = line[1];
+
+    if (!nodes[p1]) nodes[p1] = {name: p1};
+    if (!nodes[p2]) nodes[p2] = {name: p2};
+
+    links[i]  = {source: nodes[p1], target: nodes[p2]};
+    links[i].value  = 1;
+  }
+
+  document.title = "Custom CSV network" + customNetworkFileName;
+  VisualizeCustomNetwork(d3.values(nodes), d3.values(links));
 }
 
-function loadCustomTSV(fileName)
+function loadCustomTSV()
 {
-
   resetGraphics();
-  d3.tsv(fileName, function(links) {
-    var nodes = {};
 
-    var first  = d3.entries(links[0])[0].key;
-    var second = d3.entries(links[0])[1].key;
-
-    // Compute the distinct nodes from the links.
-    links.forEach(function(link) {
-        link.source = nodes[link[first]]  || (nodes[link[first]] = {name: link[first]});
-        link.target = nodes[link[second]] || (nodes[link[second]] = {name: link[second]});
-        link.value  = 1;
-    });
-
-    document.title = "Custom TSV network" + fileName;
-    VisualizeCustomNetwork(d3.values(nodes), links);
+  var lines = d3.tsv.parseRows(networkText).map(function(row) {
+    return row;
   });
+
+  var nodes = {};
+  var links = {};
+
+  for (var i = 1; i < lines.length; i++) {
+    var line  = lines[i];
+    var p1 = line[0];
+    var p2 = line[1];
+
+    if (!nodes[p1]) nodes[p1] = {name: p1};
+    if (!nodes[p2]) nodes[p2] = {name: p2};
+
+    links[i]  = {source: nodes[p1], target: nodes[p2]};
+    links[i].value  = 1;
+  }
+
+  document.title = "Custom TSV network" + customNetworkFileName;
+  VisualizeCustomNetwork(d3.values(nodes), d3.values(links));
 }
 
 
-function loadCustomCytoscapeSIF(fileName)
+function loadCustomCytoscapeSIF()
 {
   resetGraphics();
-  d3.text(fileName, function(text) {
-    var lines = d3.csv.parseRows(text).map(function(row) {
+  {
+    var lines = d3.csv.parseRows(networkText).map(function(row) {
       return row;
     });
 
@@ -131,17 +142,17 @@ function loadCustomCytoscapeSIF(fileName)
       links[i].value  = 1;
     }
 
-    document.title = "Custom Cytoscape SIF network" + fileName;
+    document.title = "Custom Cytoscape SIF network" + customNetworkFileName;
     VisualizeCustomNetwork(d3.values(nodes), d3.values(links));
-  });
+  }
 }
 
 
-function loadCustomTxt(fileName)
+function loadCustomTxt()
 {
   resetGraphics();
-  d3.text(fileName, function(text) {
-    var lines = d3.csv.parseRows(text).map(function(row) {
+  {
+    var lines = d3.csv.parseRows(networkText).map(function(row) {
       return row;
     });
 
@@ -161,35 +172,35 @@ function loadCustomTxt(fileName)
       links[i].value  = 1;
     }
 
-    document.title = "Custom Text network" + fileName;
+    document.title = "Custom Text network" + customNetworkFileName;
     VisualizeCustomNetwork(d3.values(nodes), d3.values(links));
-  });
+  }
 }
 
 
-function loadCustomNetwork(fileName)
+function loadCustomNetwork()
 {
-  if (fileName == "") {
+  if (networkText == "") {
     console.log("No custom network file provided");
     return;
   }
 
-  var extension = fileName.split('.').pop();
+  var extension = networkExtension;
 
   if (extension == "json") {
-    loadCustomJSON(fileName);
+    loadCustomJSON();
   }
   else if (extension == "csv") {
-    loadCustomCSV(fileName);
+    loadCustomCSV();
   }
   else if (extension == "tsv") {
-    loadCustomTSV(fileName);
+    loadCustomTSV();
   }
   else if (extension == "sif") {
-    loadCustomCytoscapeSIF(fileName);
+    loadCustomCytoscapeSIF();
   }
   else if (extension == "txt") {
-    loadCustomTxt(fileName);
+    loadCustomTxt();
   }
   else {
     console.log("Unsupported network file extension");

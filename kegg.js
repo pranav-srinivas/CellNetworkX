@@ -215,7 +215,8 @@ function VisualizeKeggFloating(nodes, links)
 
 function loadKeggJSON(fileName)
 {
-  d3.json(fileName, function(error, data) {
+  var filePathName = "JSON/" + fileName;
+  d3.json(filePathName, function(error, data) {
     if (error) {
       console.log("File not found " + fileName);
       return;

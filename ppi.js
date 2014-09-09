@@ -75,7 +75,9 @@ function VisualizePPI(nodes, links)
 function loadPpiJSON(expressionFileName)
 {
   resetGraphics();
-  d3.json("BackgroundPPI.json", function(data) {
+
+  var fileName = "JSON/" + backgroundPPIFileName;
+  d3.json(fileName, function(data) {
   
     var nodes = data.Nodes;
     var links = data.Links;

@@ -3,8 +3,8 @@ var myExpressions = [];
 var numberOfSeries = 0;
 var numberOfDataPoint = 0;
 var minExprValue = 0;
-var maxExprValue = 0;
 var avgExprValue = 0;
+var maxExprValue = 0;
 
 
 function resetExpressions()
@@ -12,8 +12,8 @@ function resetExpressions()
   delete myExpressions;
   myExpressions = [];
   minExprValue = 0;
-  maxExprValue = 0;
   avgExprValue = 0;
+  maxExprValue = 0;
   delete myProteins;
   myProteins = [];
 
@@ -26,11 +26,12 @@ function computeMinMaxExprValue()
 {
   minExprValue = myExpressions[0][0];
   maxExprValue = myExpressions[0][0];
-  var sum = 0;
+
+  var sumExprValue = 0;
 
   for (var i = 0; i < numberOfSeries; ++i) {
     for (var j = 0; j < numberOfDataPoint; ++j) {
-	sum = myExpressions[i][j] + sum; 
+      sumExprValue += myExpressions[i][j];
       if (myExpressions[i][j] < minExprValue) {
         minExprValue = myExpressions[i][j];
       }
@@ -39,44 +40,48 @@ function computeMinMaxExprValue()
       }
     }
   }
-  avgExprValue = sum / (numberOfSeries * numberOfDataPoint);
+
+  avgExprValue = sumExprValue / (numberOfSeries * numberOfDataPoint);
 }
 
 
-function loadExpressionCSV(fileName)
+function loadExpressionCSV()
 {
-  d3.csv(fileName, function(lines) {
+  {
+    var lines = d3.csv.parseRows(expressionText).map(function(row) {
+      return row;
+    });
 
     resetExpressions();
 
-    var line  = d3.entries(lines[0]);
+    var line  = lines[0];
     for (var i = 0; i < line.length; i++) {
-      var key = line[i].key;
+      var key = line[i];
       myNodes[key] = 1;
       myProteins[i] = key;
     }
 
-    for (var i = 0; i < lines.length; i++) {
-      var expr = d3.entries(lines[i]);
+    for (var i = 1; i < lines.length; i++) {
+      var expr = lines[i];
       var exprData = [];
       for (var j = 0; j < expr.length; j++) {
-        exprData[j] = parseFloat(expr[j].value);
+        exprData[j] = parseFloat(expr[j]);
       }
-      myExpressions[i] = exprData;
+      myExpressions[i-1] = exprData;
     }
 
     numberOfSeries = myExpressions.length;
     numberOfDataPoint = myExpressions[0].length;
 
     computeMinMaxExprValue();
-  });
+  }
 }
 
 
-function loadExpressionTxt(fileName)
+function loadExpressionTxt()
 {
-  d3.text(fileName, function(text) {
-    var lines = d3.csv.parseRows(text).map(function(row) {
+  {
+    var lines = d3.csv.parseRows(expressionText).map(function(row) {
       return row;
     });
 
@@ -107,23 +112,23 @@ function loadExpressionTxt(fileName)
     numberOfDataPoint = myExpressions[0].length;
 
     computeMinMaxExprValue();
-  });
+  }
 }
 
-function loadExpressionData(fileName)
+function loadExpressionData()
 {
-  if (fileName == "") {
+  if (expressionText == "") {
     console.log("No expression data file provided");
     return;
   }
 
-  var extension = fileName.split('.').pop();
+  var extension = expressionExtension;
 
   if (extension == "txt" || extension == "expr" || extension == "tsv") {
-    loadExpressionTxt(fileName);
+    loadExpressionTxt();
   }
   else if (extension == "csv") {
-    loadExpressionCSV(fileName);
+    loadExpressionCSV();
   }
   else {
     console.log("Unsupported expression data file extension");

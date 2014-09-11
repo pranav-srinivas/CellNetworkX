@@ -27,10 +27,10 @@ function getMarker(d)
   if (!("subtype" in d) || !("name" in d.subtype)) return marker("unknown", "pink");
   if (d.subtype.name == "activation")          return marker("activation", "green");
   if (d.subtype.name == "inhibition")          return marker("inhibition", "red");
-  if (d.subtype.name == "phosphorylation")     return marker("phosphorylation", "yellow");
+  if (d.subtype.name == "phosphorylation")     return marker("phosphorylation", "lightgreen");
   if (d.subtype.name == "dephosphorylation")   return marker("dephosphorylation", "magenta");
   if (d.subtype.name == "expression")          return marker("expression", "blue");
-  if (d.subtype.name == "binding/association") return marker("binding", "lightgreen");
+  if (d.subtype.name == "binding/association") return marker("binding", "yellow");
   if (d.subtype.name == "missing interaction") return marker("missing", "black");
   if (d.subtype.name == "repression")          return marker("repression", "orange");
   if (d.subtype.name == "dissociation")        return marker("dissociation", "gray");
@@ -43,10 +43,10 @@ function getStyle(d)
   if (!("subtype" in d) || !("name" in d.subtype)) return "pink";
   if (d.subtype.name == "activation")          return "green";
   if (d.subtype.name == "inhibition")          return "red";
-  if (d.subtype.name == "phosphorylation")     return "yellow";
+  if (d.subtype.name == "phosphorylation")     return "lightgreen";
   if (d.subtype.name == "dephosphorylation")   return "magenta";
   if (d.subtype.name == "expression")          return "blue";
-  if (d.subtype.name == "binding/association") return "lightgreen";
+  if (d.subtype.name == "binding/association") return "yellow";
   if (d.subtype.name == "missing interaction") return "black";
   if (d.subtype.name == "repression")          return "orange";
   if (d.subtype.name == "dissociation")        return "gray";
@@ -88,8 +88,8 @@ function VisualizeKeggFixed(nodes, links)
       .attr("class", "node")
       .attr("x", function(d) { return x = d.graphics.x; })
       .attr("y", function(d) { return y = d.graphics.y; })
-      .attr("rx", function(d) { return 10; })
-      .attr("ry", function(d) { return 10; })
+      .attr("rx", function(d) { return r; })
+      .attr("ry", function(d) { return r; })
       .attr("width", function(d) { return d.graphics.width; })
       .attr("height", function(d) { return d.graphics.height; })
       .style("fill", function(d) { return fill(d.id); })
@@ -97,10 +97,27 @@ function VisualizeKeggFixed(nodes, links)
       .style("stroke-width", 2)
       .call(force.drag);
 
-  node.append("text")
-      .text(function(d) {
-        return d.graphics.name;
-  });
+  var nodeName = vis.selectAll("text")
+                    .data(nodes)
+                    .enter().append("text")
+                    .style("font-size", function(d) {
+                              if ("name" in d.graphics) return "8px";
+                              return "14px";
+                          })
+                    .text(function(d) {
+                        if ("name" in d.graphics) {
+                          var names = d.graphics.name.split(/,/g);
+                          var nm = names[0];
+                          if (nm.substring(0,5) == "TITLE") nm = nm.substring(6);
+                          return nm;
+                        }
+                        if (d.name != "undefined") {
+                          var nm = d.name;
+                          if (nm.substring(0,5) == "TITLE") nm = nm.substring(6);
+                          return nm;
+                        }
+                        return "";
+                     });
 
   node.append("svg:title")
       .text(function(d) { return d.graphics.name; });
@@ -132,6 +149,28 @@ function VisualizeKeggFixed(nodes, links)
     node.attr("x", function(d) { return d.graphics.x; })
         .attr("y", function(d) { return d.graphics.y; });
 
+
+    nodeName.attr("x", function(d) {
+                   var gw = parseInt(d.graphics.width);
+                   var gx = parseInt(d.graphics.x);
+                   if ("name" in d.graphics) {
+                     names = d.graphics.name.split(/,/g);
+                     var nameLength = names[0].length;
+                     if (nameLength > 30) return gx + 0.06*gw;
+                     if (nameLength > 25) return gx + 0.08*gw;
+                     if (nameLength > 20) return gx + 0.12*gw;
+                     if (nameLength > 15) return gx + 0.16*gw;
+                     if (nameLength > 4)  return gx + 0.24*gw;
+                     if (nameLength > 3)  return gx + 0.28*gw;
+                     return gx + 0.32*gw;
+                   }
+                   return gx + gw/4; }
+                 )
+            .attr("y", function(d) { 
+                   var gh = parseInt(d.graphics.height);
+                   var gy = parseInt(d.graphics.y);
+                   return gy + 0.5*gh; }
+                 );
   });
 
   if (doAnimation) {
@@ -175,6 +214,28 @@ function VisualizeKeggFloating(nodes, links)
       .style("fill", function(d) { return fill(d.id); })
       .call(force.drag);
 
+  var nodeName = vis.selectAll("text")
+                    .data(nodes)
+                    .enter().append("text")
+                    .style("font-size", function(d) {
+                              if ("name" in d.graphics) return "5px";
+                              return "8px";
+                          })
+                    .text(function(d) { 
+                        if ("name" in d.graphics) {
+                          var names = d.graphics.name.split(/,/g);
+                          var nm = names[0];
+                          if (nm.substring(0,5) == "TITLE") nm = nm.substring(6);
+                          return nm;
+                        }
+                        if (d.name != "undefined") {
+                          var nm = d.name;
+                          if (nm.substring(0,5) == "TITLE") nm = nm.substring(6);
+                          return nm;
+                        }
+                        return "";
+                     });
+
   node.append("svg:title")
       .text(function(d) { return d.graphics.name; });
 
@@ -205,6 +266,26 @@ function VisualizeKeggFloating(nodes, links)
     node.attr("cx", function(d) { return d.x; });
     node.attr("cy", function(d) { return d.y; });
 
+    nodeName.attr("x", function(d) {
+                 if ("name" in d.graphics) {
+                   names = d.graphics.name.split(/,/g);
+                   var nameLength = names[0].length;
+                   if (d.type == "map") {
+                     if (nameLength > 32) return d.x - 0.90*R;
+                     if (nameLength > 22) return d.x - 0.75*R;
+                     if (nameLength > 12) return d.x - R/2;
+                     return d.x - R/4;
+                   }
+                   else {
+                     if (nameLength > 4) return d.x - r/2 - 4;
+                     if (nameLength > 3) return d.x - r/2 - 2;
+                     return d.x - r/2;
+                   }
+                 }
+                 if (d.type == "map") return d.x - R/4;
+                 return d.x - r/2;
+                })
+            .attr("y", function(d) { return d.y + r/4; });
   });
 
   if (doAnimation) {

@@ -25,12 +25,27 @@ function VisualizeCustomNetwork(nodes, links)
       .attr("class", "node")
       .attr("cx", function(d) { return d.x; })
       .attr("cy", function(d) { return d.y; })
-      .attr("r", 10)
+      .attr("r", r)
       .style("fill", function(d) { return fill(d.index); })
       .call(force.drag);
 
   node.append("svg:title")
       .text(function(d) { return d.name; });
+
+  node.on("mouseover", function(d) {
+    d3.select(this).style("fill", "red");
+  });
+
+  node.on("mouseout", function(d) {
+    d3.select(this).style("fill", function(d) { return fill(d.index); })
+  });
+
+  var nodeName = vis.selectAll("text")
+                    .data(nodes)
+                    .enter().append("text")
+                    .style("font-size", "5px")
+                    .text(function(d) { return d.name; });
+
 
   vis.style("opacity", 1e-6)
      .transition()
@@ -45,6 +60,14 @@ function VisualizeCustomNetwork(nodes, links)
 
     node.attr("cx", function(d) { return d.x; })
         .attr("cy", function(d) { return d.y; });
+
+    nodeName.attr("x", function(d) { 
+                 nameLength = d.name.length;
+                 if (nameLength > 4) return d.x - r/2 - 4;
+                 if (nameLength > 3) return d.x - r/2 - 2;
+                 return d.x - r/2;
+                })
+            .attr("y", function(d) { return d.y + r/4; });
   });
 
   if (doAnimation) {

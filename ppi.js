@@ -40,6 +40,12 @@ function VisualizePPI(nodes, links)
       .style("fill", function(d) { return fill(d.hprd_id); })
       .call(force.drag);
 
+  var nodeName = vis.selectAll("text")
+                    .data(nodes)
+                    .enter().append("text")
+                    .style("font-size", "5px")
+                    .text(function(d) { return d.geneSymbol; });
+
   node.append("svg:title")
       .text(function(d) { return d.geneSymbol; });
 
@@ -64,6 +70,14 @@ function VisualizePPI(nodes, links)
 
     node.attr("cx", function(d) { return d.x; })
         .attr("cy", function(d) { return d.y; });
+
+    nodeName.attr("x", function(d) { 
+                 nameLength = d.geneSymbol.length;
+                 if (nameLength > 4) return d.x - r/2 - 4;
+                 if (nameLength > 3) return d.x - r/2 - 2;
+                 return d.x - r/2;
+                })
+            .attr("y", function(d) { return d.y + r/4; });
   });
 
   if (doAnimation) {

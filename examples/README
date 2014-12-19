@@ -1,0 +1,42 @@
+Static Custom Networks Examples:
+
+   Cytoscape SIF format: A1.sif A2.sif A3.sif one.sif
+             CSV Format: C1.csv, one.csv
+             TSV Format: D1.tsv, one.tsv
+             TXT Format: B1.txt, B2.txt, one.txt, test_network.txt
+ 
+Expression Data Examples:
+
+      Protein Set (Used with background network only)
+             E1.csv, E1.tsv
+
+      Time Series (Can be used with custom networks or any background network)
+             E2.csv, E2.expr, E3.txt, Ecd3cd28Expr.csv, Ecd3cd28Expr.txt test_expr.txt
+
+
+Static Network Visualization:
+=============================
+
+   1. Upload static network in .csv, .tsv, .sif or .txt format from 
+      any computer using 'Upload->Network File' and click 'View->Network'
+
+or
+
+   2. Select a suitable Background network (KEGG fixed/floating, PPI, PPI Reduced)
+      and load protein set using 'Upload->Expression File'. Click 'View->Network' to
+      see the enriched network. For static networks the expression data can contain
+      only name of proteins (space, comma, or tab separated)
+  
+
+Dynamic Network Visualization: 
+==============================
+
+      Upload custom network or select a suitable Background network as above
+      and upload time series expression data using 'Upload->Expression File'.
+      Click 'View->Animation' to see the network (custom or enriched) and animation.
+
+Charts
+=======
+
+  For line and Bubble charts of time series data click 'Expression Charts'
+

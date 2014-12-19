@@ -103,7 +103,7 @@ $(document).ready(function() {
         networkExtension = customNetworkFileName.split('.').pop();
         networkType = 1;
         DeselectAllBN();
-        doAnimation = false;;
+        doAnimation = false;
         $("#NONE").addClass("activeBN");
     });
 
@@ -113,7 +113,7 @@ $(document).ready(function() {
         fullExpressionPathName = ($(this).val());
         expressionFileName = fullExpressionPathName.split(/(\\|\/)/g).pop()
         expressionExtension = expressionFileName.split('.').pop();
-        doAnimation = false;;
+        doAnimation = false;
     });
 
     $("a.dropdown-toggle").click(function(evt) {
@@ -122,9 +122,12 @@ $(document).ready(function() {
 
     $("ul.dropdown-menu a").click(function(evt) {
       $("a.dropdown-toggle").dropdown();
-      doAnimation = false;;
 
       var menuText = this.innerText;
+
+      if (menuText != "Animation") {
+        doAnimation = false;
+      }
 
       if (menuText == "PPI Network") {
         networkType = 2;
@@ -182,18 +185,26 @@ $('#ExpressionData').click( function() {
 
 $('#ShowNetwork').click( function() {
   chartType = 0;
-  doAnimation = false;;
+  doAnimation = false;
+  $("body").css("cursor", "progress");
   showNetwork();
+  $("body").css("cursor", "default");
 });
 
 $('#Animation').click( function() {
+  $("body").css("cursor", "progress");
   performAnimation();
+  $("body").css("cursor", "default");
 });
 
 
 $('#Back').click( function() {
-  doAnimation = false;;
+  doAnimation = false;
   goBack()();
+});
+
+$('#getExamples').click( function() {
+  window.location = 'examples.zip';
 });
 
 

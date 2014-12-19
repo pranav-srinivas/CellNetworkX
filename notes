@@ -1,0 +1,10 @@
+ftp proteinx.mallicklab.com
+
+
+terminal>ftp user@host
+     password:xXxXx
+    ftp>mkdir <remote dir>
+    ftp>cd <remote dir>
+    ftp>lcd <local dir>
+    ftp>mput *
+    ftp>close

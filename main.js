@@ -67,6 +67,7 @@ expressionReader.onload = function(e) {
 //                    3: KEGG Floating Network
 //                    4: KEGG Fixed Network
 //                    5: PPI Reduced Network
+//                    6: Big Unified KEGG Network
 //----------------------------------------------------------
 var networkType = 2;
 $("#PPI1").addClass("activeBN");
@@ -74,6 +75,8 @@ $("#PPI1").addClass("activeBN");
 var chartType = 0;
 
 $("a.dropdown-toggle").dropdown();
+
+var unifiedCancerType = "NSCLC";
 
 //----------------------------------------------------------
 // Navigation Bar Processing
@@ -95,6 +98,15 @@ function DeselectAllCH()
 }
 
 $(document).ready(function() {
+
+    $('#searchTerm').change(function(evt) {
+        var searchedSymbols = evt.currentTarget.value;
+        if (networkType == 6) {
+          searchAndcenter(searchedSymbols);
+        }
+    });
+
+
     $('#networkFile').change(function(evt) {
         var f = evt.target.files[0];
         networkReader.readAsText(f);
@@ -198,6 +210,122 @@ $('#Animation').click( function() {
 });
 
 
+$('#ShowNSCLCNetwork').click( function() {
+  chartType = 0;
+  doAnimation = false;
+  networkType = 6;
+  DeselectAllBN();
+  unifiedCancerType = "NSCLC";
+  $("body").css("cursor", "progress");
+  createBigKeggNetwork(unifiedCancerType);
+  $("body").css("cursor", "default");
+});
+
+
+$('#ShowCRCNetwork').click( function() {
+  chartType = 0;
+  doAnimation = false;
+  networkType = 6;
+  DeselectAllBN();
+  unifiedCancerType = "CRC";
+  $("body").css("cursor", "progress");
+  createBigKeggNetwork(unifiedCancerType);
+  $("body").css("cursor", "default");
+});
+
+$('#ShowMain4Network').click( function() {
+  chartType = 0;
+  doAnimation = false;
+  networkType = 6;
+  DeselectAllBN();
+  unifiedCancerType = "MAIN4";
+  $("body").css("cursor", "progress");
+  createBigKeggNetwork(unifiedCancerType);
+  $("body").css("cursor", "default");
+});
+
+$('#ShowMapkNetwork').click( function() {
+  chartType = 0;
+  doAnimation = false;
+  networkType = 6;
+  DeselectAllBN();
+  unifiedCancerType = "MAPK";
+  $("body").css("cursor", "progress");
+  createBigKeggNetwork(unifiedCancerType);
+  $("body").css("cursor", "default");
+});
+
+
+$('#DoSimulation').click( function() {
+  if (networkType == 6) {
+    performSimulation();
+    var simulationWin = window.open();
+    simulationWin.document.write(allSimulationTexts);
+    simulationWin.document.title = 'Simulation Output';
+  }
+});
+
+$('#DetectFeedbackLoops').click( function() {
+  if (networkType == 6) {
+    detectFeedbackLoops();
+    var loopWin = window.open();
+    loopWin.document.write(allLoopTexts);
+    loopWin.document.title = 'Feedback Loops';
+  }
+});
+
+
+$('#DetectHubNodes').click( function() {
+  if (networkType == 6) {
+    detectHubNodes();
+    var hubWin = window.open();
+    hubWin.document.write(allHubTexts);
+    hubWin.document.title = 'Hub Nodes';
+  }
+});
+
+
+$('#SortNodes').click( function() {
+  if (networkType == 6) {
+    sortNodes();
+    var sortWin = window.open();
+    sortWin.document.write(allSortedNodeTexts);
+    sortWin.document.title = 'Sorted Nodes';
+  }
+});
+
+
+$('#ComputeCentralityMetrics').click( function() {
+
+});
+
+$('#GetShortestPath').click( function() {
+  if (networkType == 6) {
+    shortestPath();
+    var pathWin = window.open();
+    pathWin.document.write(allPathTexts);
+    pathWin.document.title = 'Shortest Path';
+  }
+});
+
+$('#GetLongestPath').click( function() {
+  if (networkType == 6) {
+    longestPath();
+    var pathWin = window.open();
+    pathWin.document.write(allPathTexts);
+    pathWin.document.title = 'Longest Path';
+  }
+});
+
+$('#GetAllPaths').click( function() {
+  if (networkType == 6) {
+    allPaths();
+    var pathWin = window.open();
+    pathWin.document.write(allPathTexts);
+    pathWin.document.title = 'All Path';
+  }
+});
+
 $('#Back').click( function() {
   doAnimation = false;
   goBack()();
@@ -260,6 +388,9 @@ function showNetwork()
   }
   else if (networkType == 3 || networkType == 4) {
     loadKeggJSON(currKeggFileName);
+  }
+  else if (networkType == 6) {
+    createBigKeggNetwork(unifiedCancerType);
   }
 }
 

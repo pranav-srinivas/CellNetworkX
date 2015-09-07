@@ -116,6 +116,12 @@ var AnimateOneTimeStep = function() {
 
 function performAnimation()
 {
+  if (numberOfSeries < 2) {
+    doAnimation = false;
+    showNetwork();
+    return;
+  }
+
   if (doAnimation) {
     TimeStepIndex = 0;
     d3.timer(AnimateOneTimeStep(), interval);

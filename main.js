@@ -54,12 +54,28 @@ var networkExtension, expressionExtension;
 
 networkReader.onload = function(e) {
   networkText = networkReader.result;
+  $("body").css("cursor", "progress");
+  showNetwork();
+  $("body").css("cursor", "default");
 }
 
 expressionReader.onload = function(e) {
   expressionText = expressionReader.result;
   loadExpressionData();
+  $("body").css("cursor", "progress");
+  performAnimation();
+  $("body").css("cursor", "default");
 }
+
+
+var CCLEbinaryExprReader = new FileReader();
+var CCLEbinaryExprText;
+
+CCLEbinaryExprReader.onload = function(e) {
+  CCLEbinaryExprText = CCLEbinaryExprReader.result;
+  enrichWithCCLEExpr(0);
+}
+
 
 //----------------------------------------------------------
 // Type of Network:   1: Custom Network
@@ -71,6 +87,8 @@ expressionReader.onload = function(e) {
 //----------------------------------------------------------
 var networkType = 2;
 $("#PPI1").addClass("activeBN");
+
+$("#Drug1").addClass("activeDRUG");
 
 var chartType = 0;
 
@@ -86,8 +104,6 @@ function DeselectAllBN()
 {
       $("#PPI1").removeClass("activeBN");
       $("#PPI2").removeClass("activeBN");
-      $("#KBN1").removeClass("activeBN");
-      $("#KBN2").removeClass("activeBN");
       $("#NONE").removeClass("activeBN");
 }
 
@@ -132,6 +148,26 @@ $(document).ready(function() {
       $("a.dropdown-toggle").dropdown();
     });
 
+    $("ul.dropdown-menu d").click(function(event) {
+      $("a.dropdown-toggle").dropdown();
+      var target = $( event.currentTarget );
+      var inp = target.find( 'input' );
+      var select;
+      if (inp.is(":checked")) {
+        inp.prop( 'checked', false);
+        select = false;
+      }
+      else {
+        inp.prop( 'checked', true );
+        select = true;
+      }
+      if (this.id.indexOf("Drug") >= 0) {
+        event.stopPropagation();
+        selectDrug(this.id, select);
+      }
+    });
+
+
     $("ul.dropdown-menu a").click(function(evt) {
       $("a.dropdown-toggle").dropdown();
 
@@ -151,17 +187,19 @@ $(document).ready(function() {
         DeselectAllBN();
         $("#PPI2").addClass("activeBN");
       }
-      else if (menuText == "KEGG Floating Network") {
+      else if (menuText == "Floating Network") {
         networkType = 3;
         currKeggFileName = backgroundKEGGFileName;
-        DeselectAllBN();
-        $("#KBN1").addClass("activeBN");
+        $("body").css("cursor", "progress");
+        showNetwork();
+        $("body").css("cursor", "default");
       }
-      else if (menuText == "KEGG Fixed Network") {
+      else if (menuText == "Fixed Network") {
         networkType = 4;
         currKeggFileName = backgroundKEGGFileName;
-        DeselectAllBN();
-        $("#KBN2").addClass("activeBN");
+        $("body").css("cursor", "progress");
+        showNetwork();
+        $("body").css("cursor", "default");
       }
       else if (menuText == "No Background Network") {
         networkType = 1;
@@ -186,6 +224,30 @@ $(document).ready(function() {
 
 });
 
+
+function selectDrug(Id, select)
+{
+  var ids = Id.replace("Drug","");
+  var idx = Number(ids) - 1;
+
+  if (select) {
+    currentDrugIdx[ currentDrugIdx.length ] = idx;
+  }
+  else {
+    var prevDrugIdx = currentDrugIdx;
+    currentDrugIdx  = [];
+    for (var i = 0; i < prevDrugIdx.length; i++) {
+      var ix = prevDrugIdx[i];
+      if (ix != idx) {
+        currentDrugIdx[ currentDrugIdx.length ] = ix;
+      }
+    }
+  }
+
+  perturbationsNodes  = [];
+  perturbationsValues = [];
+}
+
 $('#UploadNetwork').click( function() {
   document.getElementById('networkFile').click();
 });
@@ -195,13 +257,6 @@ $('#ExpressionData').click( function() {
   document.getElementById('expressionFile').click();
 });
 
-$('#ShowNetwork').click( function() {
-  chartType = 0;
-  doAnimation = false;
-  $("body").css("cursor", "progress");
-  showNetwork();
-  $("body").css("cursor", "default");
-});
 
 $('#Animation').click( function() {
   $("body").css("cursor", "progress");
@@ -265,6 +320,17 @@ $('#DoSimulation').click( function() {
   }
 });
 
+
+$('#AcquiredResistance').click( function() {
+  if (networkType == 6) {
+    simulateAcquiredResistance();
+    var resistanceWin = window.open();
+    resistanceWin.document.write( resistanceTexts );
+    resistanceWin.document.title = 'Bypass Drug Resistance';
+  }
+});
+
+
 $('#DetectFeedbackLoops').click( function() {
   if (networkType == 6) {
     detectFeedbackLoops();
@@ -275,12 +341,22 @@ $('#DetectFeedbackLoops').click( function() {
 });
 
 
-$('#DetectHubNodes').click( function() {
+$('#DetectTF').click( function() {
   if (networkType == 6) {
-    detectHubNodes();
-    var hubWin = window.open();
-    hubWin.document.write(allHubTexts);
-    hubWin.document.title = 'Hub Nodes';
+    detectTFs();
+    var tfWin = window.open();
+    tfWin.document.write(allTfTexts);
+    tfWin.document.title = 'Transcription Factors';
+  }
+});
+
+
+$('#PrintNetwork').click( function() {
+  if (networkType == 6) {
+    dumpNetwork();
+    var printWin = window.open();
+    printWin.document.write(exportNetworkTexts);
+    printWin.document.title = 'Export Network';
   }
 });
 
@@ -290,7 +366,23 @@ $('#SortNodes').click( function() {
     sortNodes();
     var sortWin = window.open();
     sortWin.document.write(allSortedNodeTexts);
-    sortWin.document.title = 'Sorted Nodes';
+    sortWin.document.title = 'Hub Nodes';
+  }
+});
+
+
+$('#NextSample').click( function() {
+  ++currentSampleIndex;
+  clearSimulation();
+});
+
+
+$('#PathwaySignature').click( function() {
+  if (networkType == 6) {
+    computePathwaySignatures();
+    var signatureWin = window.open();
+    signatureWin.document.write(activePathwayTexts);
+    signatureWin.document.title = 'Pathway Signatures';
   }
 });
 
@@ -298,6 +390,28 @@ $('#SortNodes').click( function() {
 $('#ComputeCentralityMetrics').click( function() {
 
 });
+
+
+$('#ReduceNetwork').click( function() {
+  if (networkType == 6) {
+    reduceNetwork();
+  }
+});
+
+
+$('#LoadCCLEexprADC').click( function() {
+  if (networkType == 6) {
+    enrichWithCCLEExpr(1);
+  }
+});
+
+
+$('#LoadCCLEexprSCC').click( function() {
+  if (networkType == 6) {
+    enrichWithCCLEExpr(2);
+  }
+});
+
 
 $('#GetShortestPath').click( function() {
   if (networkType == 6) {

@@ -41,6 +41,27 @@
         .activeCH {
             background-color: orange;
         }
+
+        .navbar-default {
+          background-color: darkred;
+          border-color:     black;
+        }
+
+        .navbar .nav > li > a  {
+          color:          white;
+          text-shadow:    none;
+        }
+
+        .navbar .nav > li > a:hover {
+          color:          gold;
+          text-shadow:    none;
+        }
+
+        .dropdown-toggle:active, .open .dropdown-toggle {
+          background:none !important; 
+          color:gold !important;
+        }
+
   </style>
   </style>
 
@@ -48,7 +69,7 @@
 
   <script src="./JS/bootstrap.min.js"></script>
 
-    <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="navbar navbar-default navbar-fixed-top" role="navigation">
       <div class="container-fluid">
         <div class="navbar-header">
           <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -57,7 +78,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#">CellNetworkX</a>
+          <a class="navbar-brand" style="color: white" href="#">CellNetworkX</a>
         </div>
         <div class="navbar-collapse collapse">
 
@@ -73,18 +94,52 @@
           <ul class="nav navbar-nav navbar-right">
 
             <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Upload<span class="caret"></span></a>
-                <ul class="dropdown-menu" role="menu" style="background-color: gray" >
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Network<span class="caret"></span></a>
+                <ul class="dropdown-menu" role="menu" style="background-color: lightgray" >
                   <li><a id="UploadNetwork" method="post" href="#">Network File...</a></li>
-                  <li><a id="ExpressionData" href="#">Expression File...</a></li>
+                  <li><a id="ShowMapkNetwork" href="#">MAPK Signaling </a></li>
+                  <li><a id="ShowMain4Network" href="#">MAPK ErbB PI3K/Akt mTOR Signaling </a></li>
+                  <li><a id="ShowNSCLCNetwork" href="#">NSCLC Signaling</a></li>
+                  <li><a id="ShowCRCNetwork" href="#">CRC Signaling</a></li>
+                  <li><a id="ReduceNetwork" href="#">Compress</a></li>
+                  <li><a id="PrintNetwork" href="#">Export</a></li>
                 </ul>
             </li>
 
             <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">KEGG<span class="caret"></span></a>
+                <ul class="dropdown-menu" role="menu" style="background-color: lightgray" >
+                  <li><a id="KBN1" href="#">Floating Network</a></li>
+                  <li><a id="KBN2" href="#">Fixed Network</a></li>
+                  <li><a id="Back" href="#">Go Back</a></li>
+                </ul>
+            </li>
+
+
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Properties<span class="caret"></span></a>
+                <ul class="dropdown-menu" role="menu" style="background-color: lightgray" >
+                  <li><a id="DetectTF" href="#">Transcription Factors</a></li>
+                  <li><a id="SortNodes" href="#">Hub Nodes</a></li>
+                  <li><a id="ComputeCentralityMetrics" href="#">Centrality Metrics</a></li>
+                </ul>
+            </li>
+
+
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Paths<span class="caret"></span></a>
+                <ul class="dropdown-menu" role="menu" style="background-color: lightgray" >
+                  <li><a id="DetectFeedbackLoops" href="#">Feedback Loops</a></li>
+                  <li><a id="GetShortestPath" href="#">Shortest Path</a></li>
+                  <li><a id="GetLongestPath"  href="#">Longest Path</a></li>
+                  <li><a id="GetAllPaths"     href="#">All Paths</a></li>
+                </ul>
+            </li>
+
+
+            <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown">Background<span class="caret"></span></a>
-                <ul class="dropdown-menu" role="menu" style="background-color: gray" >
-                  <li><a id="KBN1" href="#">KEGG Floating Network</a></li>
-                  <li><a id="KBN2" href="#">KEGG Fixed Network</a></li>
+                <ul class="dropdown-menu" role="menu" style="background-color: lightgray" >
                   <li><a id="PPI1" href="#">PPI Network</a></li>
                   <li><a id="PPI2" href="#">PPI Reduced Network</a></li>
                   <li><a id="NONE" href="#">No Background Network</a></li>
@@ -92,44 +147,57 @@
             </li>
 
             <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown">View<span class="caret"></span></a>
-                <ul class="dropdown-menu" role="menu" style="background-color: gray" >
-                  <li><a id="ShowNetwork" href="#">Network</a></li>
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Expression<span class="caret"></span></a>
+                <ul class="dropdown-menu" role="menu" style="background-color: lightgray" >
+                  <li><a id="ExpressionData" href="#">Expression File...</a></li>
+                  <li><a id="LoadCCLEexprADC" href="#">Import CCLE Lung ADC </a></li>
+                  <li><a id="LoadCCLEexprSCC" href="#">Import CCLE Lung SCC </a></li>
                   <li><a id="Animation" href="#">Animation</a></li>
-                </ul>
-            </li>
-
-            <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Charts<span class="caret"></span></a>
-                <ul class="dropdown-menu" role="menu" style="background-color: gray" >
                   <li><a id="BC" href="#">Bubble Chart</a></li>
                   <li><a id="LC" href="#">Line Chart</a></li>
                 </ul>
             </li>
 
+
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown">Tools<span class="caret"></span></a>
-                <ul class="dropdown-menu" role="menu" style="background-color: gray" >
-                  <li><a id="ShowNSCLCNetwork" href="#">NSCLC Signaling Network</a></li>
-                  <li><a id="ShowCRCNetwork" href="#">CRC Signaling Network</a></li>
-                  <li><a id="ShowMapkNetwork" href="#">MAPK Signaling </a></li>
-                  <li><a id="ShowMain4Network" href="#">MAPK ErbB PI3K/Akt mTOR Signaling </a></li>
-                  <li><a id="DoSimulation" href="#">Simulation</a></li>
-                  <li><a id="DetectFeedbackLoops" href="#">Feedback Loops</a></li>
-                  <li><a id="DetectHubNodes" href="#">Hub Nodes</a></li>
-                  <li><a id="SortNodes" href="#">Sort Nodes</a></li>
-                  <li><a id="ComputeCentralityMetrics" href="#">Centrality Metrics</a></li>
-                  <li><a id="GetShortestPath" href="#">Shortest Path</a></li>
-                  <li><a id="GetLongestPath"  href="#">Longest Path</a></li>
-                  <li><a id="GetAllPaths"     href="#">All Paths</a></li>
+                <ul class="dropdown-menu" role="menu" style="background-color: lightgray" >
+                  <li><a id="PathwaySignature"href="#">Pathway Signature Analysis</a></li>
+                  <li><a id="DoSimulation" href="#">Drug Simulation</a></li>
+                  <li><a id="AcquiredResistance" href="#">Acquired Resistance Prediction</a></li>
                 </ul>
             </li>
 
-            <li><a id="Back" href="#">Back</a></li>
+
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Drugs<span class="caret"></span></a>
+                <ul class="dropdown-menu" role="menu" style="background-color: lightgray" >
+                  <li><d id="Drug1"  tabIndex="-1" href="#"><input type="checkbox"/>&nbsp;Erlotinib</a></li>
+                  <li><d id="Drug2"  tabIndex="-1" href="#"><input type="checkbox"/>&nbsp;Lapatinib</a></li>
+                  <li><d id="Drug3"  tabIndex="-1" href="#"><input type="checkbox"/>&nbsp;PHA665752</a></li>
+                  <li><d id="Drug4"  tabIndex="-1" href="#"><input type="checkbox"/>&nbsp;Crizotinib</a></li>
+                  <li><d id="Drug5"  tabIndex="-1" href="#"><input type="checkbox"/>&nbsp;TAE684</a></li>
+                  <li><d id="Drug6"  tabIndex="-1" href="#"><input type="checkbox"/>&nbsp;Vandetanib</a></li>
+                  <li><d id="Drug7"  tabIndex="-1" href="#"><input type="checkbox"/>&nbsp;Nilotinib</a></li>
+                  <li><d id="Drug8"  tabIndex="-1" href="#"><input type="checkbox"/>&nbsp;Saracatinib</a></li>
+                  <li><d id="Drug9"  tabIndex="-1" href="#"><input type="checkbox"/>&nbsp;Sorafenib</a></li>
+                  <li><d id="Drug10" tabIndex="-1" href="#"><input type="checkbox"/>&nbsp;Dovitinib</a></li>
+                  <li><d id="Drug11" tabIndex="-1" href="#"><input type="checkbox"/>&nbsp;PD0332991</a></li>
+                  <li><d id="Drug12" tabIndex="-1" href="#"><input type="checkbox"/>&nbsp;AEW541</a></li>
+                  <li><d id="Drug13" tabIndex="-1" href="#"><input type="checkbox"/>&nbsp;RAF265</a></li>
+                  <li><d id="Drug14" tabIndex="-1" href="#"><input type="checkbox"/>&nbsp;PLX4720</a></li>
+                  <li><d id="Drug15" tabIndex="-1" href="#"><input type="checkbox"/>&nbsp;Selumetinib</a></li>
+                  <li><d id="Drug16" tabIndex="-1" href="#"><input type="checkbox"/>&nbsp;Nutlin3</a></li>
+                  <li><d id="Drug17" tabIndex="-1" href="#"><input type="checkbox"/>&nbsp;LBW242</a></li>
+                  <li><d id="Drug18" tabIndex="-1" href="#"><input type="checkbox"/>&nbsp;Panobinostat</a></li>
+                </ul>
+            </li>
+
+            <li><a id="NextSample" href="#">Next Sample</a></li>
 
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown">Help<span class="caret"></span></a>
-                <ul class="dropdown-menu" role="menu" style="background-color: gray" >
+                <ul class="dropdown-menu" role="menu" style="background-color: lightgray" >
                   <li><a id="aboutApp" href="#">About CellNetworkX</a></li>
                   <li><a id="getExamples" href="#">Download Examples</a></li>
                 </ul>
@@ -151,7 +219,14 @@
   <script type="text/javascript" src="expression.js"></script>
   <script type="text/javascript" src="chart.js"></script>
   <script type="text/javascript" src="main.js"></script>
-  <script type="text/javascript" src="BigKegg.js"></script> 
+  <script type="text/javascript" src="reduce.js"></script>
+  <script type="text/javascript" src="enrich.js"></script>
+  <script type="text/javascript" src="BigKegg.js"></script>
+  <script type="text/javascript" src="signature.js"></script>
+  <script type="text/javascript" src="simulation.js"></script>
+  <script type="text/javascript" src="path.js"></script>
+  <script type="text/javascript" src="loop.js"></script>
+  <script type="text/javascript" src="resistance.js"></script>
 
 </body>
 

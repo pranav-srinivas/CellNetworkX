@@ -1,4 +1,4 @@
-var CommonPathwayFiles = [
+var CommonPathwayFiles = [ "hsa05200.json",
                            "hsa04310.json", "hsa04151.json", "hsa04150.json", "hsa04210.json",
                            "hsa04010.json", "hsa04350.json", "hsa04110.json", "hsa04115.json",
                            "hsa04520.json", "hsa04510.json", "hsa04070.json",
@@ -12,25 +12,12 @@ var CommonPathwayFiles = [
                          ]
 
 var NSCLC_Files = [
-                    "hsa04010.json",    // "title": "MAPK signaling pathway",
-                    "hsa04012.json",    // "title": "ErbB signaling pathway",
-                    "hsa04014.json",    // "title": "Ras signaling pathway",
-                    "hsa04020.json",    // "title": "Calcium signaling pathway",
-                    "hsa04024.json",    // "title": "cAMP signaling pathway",
-                    "hsa04064.json",    // "title": "NF-kappa B signaling pathway",
-                    "hsa04150.json",    // "title": "mTOR signaling pathway",
-                    "hsa04151.json",    // "title": "PI3K-Akt signaling pathway",
-                    "hsa04210.json",    // "title": "Apoptosis",
-                    "hsa04310.json",    // "title": "Wnt signaling pathway",
-                    "hsa04350.json",    // "title": "TGF-beta signaling pathway",
-                    "hsa04630.json",    // "title": "Jak-STAT signaling pathway",
-                    "hsa04910.json",    // "title": "Insulin signaling pathway",
                     "hsa05223.json",    // "title": "Non-small cell lung cancer",
                   ]
 
 
 var MAPK_Files =  [
-                    "hsa04010.json"    // "title": "MAPK signaling pathway",
+                    "hsa04010.json"     // "title": "MAPK signaling pathway",
                   ]
 
 var MAIN4_Files = [
@@ -54,26 +41,15 @@ var gFileIndex = 0;
 var number2Title = { };
 var myKeggNodes  = { };
 var myKeggLinks  = { };
-var TranscriptionFactors = { };
 
 var primaryInputs  = [];
 var primaryOutputs = [];
-var traversalStack = [];
-var numLoops       = 0;
-var numHubs        = 0;
-var numPaths       = 0;
+var TranscriptionFactors = [];
 
-var Loops = [];
-var Paths = [];
-
-var allLoopTexts = "";
-var allHubTexts  = "";
-var allPathTexts = "";
+var allTfTexts  = "";
 var allSortedNodeTexts = "";
-var allSimulationTexts = "";
+var exportNetworkTexts = "";
 
-var perturbationsNodes  = [];
-var perturbationsValues = [];
 
 function getAllKeggFiles()
 {
@@ -113,7 +89,7 @@ function resetBigKeggNetwork()
 function createBigKeggNetwork(cancerType)
 {
   KeggFiles = [];
-  if (cancerType == "NSCLC") KeggFiles = NSCLC_Files;
+  if (cancerType == "NSCLC") KeggFiles = CommonPathwayFiles.concat(NSCLC_Files);
   if (cancerType == "CRC")   KeggFiles = CommonPathwayFiles.concat(CRC_Files);
   if (cancerType == "MAIN4") KeggFiles = MAIN4_Files;
   if (cancerType == "MAPK")  KeggFiles = MAPK_Files;
@@ -177,6 +153,8 @@ function appendKeggNetwork(fileName)
             TheNode.Pathways = [];
             TheNode.Pathways[TheNode.Pathways.length] = title;
             TheNode.RegulatedGenes = [];
+            TheNode.isTF = false;
+            TheNode.isRegulated = false;
           }
         }
       }
@@ -196,6 +174,7 @@ function appendKeggNetwork(fileName)
 
       var interactionType = getInteractionType(l);
       var linkName = getNodeName(gNodes[l.source]) + ":" + getNodeName(gNodes[l.target]);
+
       if (!myKeggLinks.hasOwnProperty(linkName) && interactionType != "GErel") {
         myKeggLinks[linkName] = gLinks.length;
         gLinks[gLinks.length] = l;
@@ -206,7 +185,7 @@ function appendKeggNetwork(fileName)
         var sourceCompId = [];
         if (groupId2Node.hasOwnProperty(l.entry1)) {
           var groupNode = groupId2Node[l.entry1];
-          for (var c = 1; c < groupNode.component.length; c++) {
+          for (var c = 0; c < groupNode.component.length; c++) {
             sourceCompId[sourceCompId.length] = groupNode.component[c].id;
           }
         }
@@ -217,7 +196,7 @@ function appendKeggNetwork(fileName)
         var targetCompId = [];
         if (groupId2Node.hasOwnProperty(l.entry2)) {
           var groupNode = groupId2Node[l.entry2];
-          for (var c = 1; c < groupNode.component.length; c++) {
+          for (var c = 0; c < groupNode.component.length; c++) {
             targetCompId[targetCompId.length] = groupNode.component[c].id;
           }
         }
@@ -230,6 +209,7 @@ function appendKeggNetwork(fileName)
             var sourceIdx = nodeId2Index[ sourceCompId[i] ];
             var targetIdx = nodeId2Index[ targetCompId[j] ];
             var linkName  = getNodeName(gNodes[sourceIdx]) + ":" + getNodeName(gNodes[targetIdx]);
+
             if (!myKeggLinks.hasOwnProperty(linkName) && interactionType != "GErel") {
               myKeggLinks[linkName] = gLinks.length;
               var newLink = jQuery.extend(true, {}, l);
@@ -240,7 +220,8 @@ function appendKeggNetwork(fileName)
             if (interactionType == "GErel") {
               var TFnode     = gNodes [ sourceIdx ];
               var TargetGene = gNodes [ targetIdx ];
-              TranscriptionFactors[TFnode] = true;
+              TFnode.isTF = true;
+              TargetGene.isRegulated = true;
               TFnode.RegulatedGenes[TFnode.RegulatedGenes.length] = TargetGene;
             }
           }
@@ -250,7 +231,8 @@ function appendKeggNetwork(fileName)
         if (interactionType == "GErel") {
           var TFnode     = gNodes [ nodeId2Index[l.entry1] ];
           var TargetGene = gNodes [ nodeId2Index[l.entry2] ];
-          TranscriptionFactors[TFnode] = true;
+          TFnode.isTF = true;
+          TargetGene.isRegulated = true;
           TFnode.RegulatedGenes[TFnode.RegulatedGenes.length] = TargetGene;
         }
       }
@@ -278,15 +260,16 @@ function initializeNetworkProperties()
     var n = gNodes[i];
     n.inDegree  = 0;
     n.outDegree = 0;
-    n.delay     = 0;
     n.fanout    = [];
     n.fanin     = [];
-    n.linkout    = [];
-    n.linkin     = [];
+    n.linkout   = [];
+    n.linkin    = [];
+    n.isDisabled  = false;
   }
 
   for (var i = 0; i < gLinks.length; i++) {
     var l = gLinks[i];
+    l.isDisabled  = false;
 
     var sourceNode = gNodes[l.source];
     var targetNode = gNodes[l.target];
@@ -322,15 +305,28 @@ function initializeNetworkProperties()
 
     if (interactionName == "missing interaction") { l.influence =  0; l.delay = 1; }
     if (interactionName == "unknown")             { l.influence =  0; l.delay = 1; }
+
+    if (interactionName == "missing interaction" ||
+        interactionName == "unknown"             ||
+        interactionName == "indirect effect"     ||
+        interactionName == "state change") {
+      l.isDisabled = true;
+    }
   }
+
+  disableCompoundsAndAssociatedLinks();
+  removeIsolatedNodes();
 
   for (var i = 0; i < gNodes.length; i++) {
     var n = gNodes[i];
-    if (n.inDegree == 0) {
+    if (n.inDegree == 0 && n.isDisabled == false) {
       primaryInputs[ primaryInputs.length ] = n;
     }
-    else if (n.outDegree == 0) {
+    else if (n.outDegree == 0 && n.isDisabled == false) {
       primaryOutputs[ primaryOutputs.length ] = n;
+    }
+    if (n.isTF) {
+      TranscriptionFactors[ TranscriptionFactors.length ] = n;
     }
   }
 }
@@ -353,98 +349,6 @@ var getNodeName = function(d)
     return nm;
   }
   return "undefined";
-}
-
-
-function clearFlags()
-{
-  for (var i = 0; i < gNodes.length; i++) {
-    var n = gNodes[i];
-    n.visited = false;
-  }
-
-  traversalStack = [];
-}
-
-
-function initializeLoops()
-{
-  clearFlags();
-  numLoops = 0;
-  delete Loops;
-  Loops = [];
-  allLoopTexts = "";
-}
-
-
-function initializePaths()
-{
-  clearFlags();
-  numPaths = 0;
-  delete Paths;
-  Paths = [];
-  allPathTexts = "";
-}
-
-function detectFeedbackLoops()
-{
-  initializeLoops();
-
-  for (var i = 0; i < gNodes.length; i++) {
-    var n = gNodes[i];
-    if (n.visited == false) {
-      detectLoopsDFS(n);
-    }
-  }
-
-  console.log("Detected " + numLoops + " feedback loops in the signaling network");
-  clearFlags();
-}
-
-
-function detectLoopsDFS(n)
-{
-  if (n.visited == true) {
-    var loopFound = false;
-    var loopsNodes = [];
-    loopsNodes[loopsNodes.length] = n;
-
-    for (var i = traversalStack.length - 1; i >= 0; i--) {
-      var stackNode = traversalStack[i];
-      loopsNodes[loopsNodes.length] = stackNode;
-      if (stackNode == n) {
-        loopFound = true;
-        break;
-      }
-    }
-
-    if (loopFound) {
-      var theLoop = [];
-      var loopMsg = "" + (numLoops+1) + ". " ;
-      for (var i = loopsNodes.length - 1; i >= 0; i--) {
-        theLoop[theLoop.length] = loopsNodes[i];
-        loopMsg += getNodeName(loopsNodes[i]);
-        if (i > 0) loopMsg += "->";
-      }
-      Loops[numLoops] = theLoop;
-      ++numLoops;
-
-      allLoopTexts += loopMsg + "<br>";
-      console.log(loopMsg);
-    }
-
-    return;
-  }
-
-  n.visited = true;
-  traversalStack[ traversalStack.length ] = n;
-
-  for (var i = 0; i < n.fanout.length; i++) {
-    var fo = n.fanout[i];
-    detectLoopsDFS(fo);
-  }
-
-  traversalStack.length -= 1;
 }
 
 
@@ -491,47 +395,39 @@ function searchAndcenter(symbols)
       perturbationsValues[ perturbationsValues.length ] = names[i+1] == "1" ? 1 : 0;
     }
   }
-
-
-
-
 }
 
-function detectHubNodes()
+function detectTFs()
 {
-  numHubs = 0;
-  allHubTexts = "";
+  allTfTexts = "";
 
+  allTfTexts += "Transcription Factors" + "<br>";
+  allTfTexts += "-------------------------" + "<br>";
+  allTfTexts += " " + "<br>";
   for (var i = 0; i < gNodes.length; i++) {
     var n = gNodes[i];
-    var degree = n.inDegree + n.outDegree;
-    if (degree > 10) {
-      allHubTexts += " " + getNodeName(n) + "<br>";
-      ++numHubs;
+    if (n.isTF == true || n.RegulatedGenes.length > 0) {
+      allTfTexts += " " + getNodeName(n) + "<br>";
     }
   }
 
-  allHubTexts += "<br>" + "<br>" + "Primary Inputs" + "<br>";
+  allTfTexts += "Primary Inputs" + "<br>";
+  allTfTexts += "-------------------------" + "<br>";
+  allTfTexts += " " + "<br>";
   for (var i = 0; i < gNodes.length; i++) {
     var n = gNodes[i];
-    if (n.inDegree == 0 && n.outDegree > 0) {
-      allHubTexts += " " + getNodeName(n) + "<br>";
+    if (n.inDegree == 0 && n.outDegree > 0 && n.isDisabled == false) {
+      allTfTexts += " " + getNodeName(n) + "<br>";
     }
   }
 
-  allHubTexts += "<br>" + "<br>" + "Transcription Factors" + "<br>";
+  allTfTexts += "Primary Outputs" + "<br>";
+  allTfTexts += "-------------------------" + "<br>";
+  allTfTexts += " " + "<br>";
   for (var i = 0; i < gNodes.length; i++) {
     var n = gNodes[i];
-    if (n.RegulatedGenes.length > 0) {
-      allHubTexts += " " + getNodeName(n) + "<br>";
-    }
-  }
-
-  allHubTexts += "<br>" + "<br>" + "Primary Outputs" + "<br>";
-  for (var i = 0; i < gNodes.length; i++) {
-    var n = gNodes[i];
-    if (n.inDegree > 0 && n.outDegree == 0) {
-      allHubTexts += " " + getNodeName(n) + "<br>";
+    if (n.inDegree > 0 && n.outDegree == 0 && n.isTF == false && n.isDisabled == false) {
+      allTfTexts += " " + getNodeName(n) + "<br>";
     }
   }
 }
@@ -558,7 +454,7 @@ function sortNodes()
     var n = allNodes[i];
     {
       allSortedNodeTexts += "     " + getNodeName(n) + "     ";
-      allSortedNodeTexts += "             Degree: " + (n.inDegree + n.outDegree) + "  ";
+      allSortedNodeTexts += "             (Degree: " + (n.inDegree + n.outDegree) + ")  ";
       // allSortedNodeTexts += "Pathways : " + n.Pathways.length + "   Degree: " + (n.inDegree + n.outDegree) + "  ";
       
       // for (var j = 0; j < n.Pathways.length; j++) {
@@ -572,305 +468,93 @@ function sortNodes()
 }
 
 
-var getLongestPath = function()
+function dumpNetwork()
 {
-  var maxPath = null;
-  if (numPaths > 0) {
-    maxPath = Paths[0];
-    for (var i = 1; i < Paths.length; i++) {
-      var path = Paths[i];
-      if (path.length > maxPath.length) {
-        maxPath = path;
-      }
+  exportNetworkTexts = "";
+  for (var i = 0; i < gLinks.length; i++) {
+    var l = gLinks[i];
+    if (l.isDisabled == true) continue;
+
+    var interactionName = getInteractionName(l);
+
+    if (interactionName == "activation" ||
+        interactionName == "inhibition" ||
+        interactionName == "phosphorylation" ||
+        interactionName == "dephosphorylation" ||
+        interactionName == "dissociation"      ||
+        interactionName == "binding/association") {
+
+      var sourceNode = l.source;
+      var targetNode = l.target;
+      var linkText = getNodeName(sourceNode) + "\t" + interactionName + "\t" + getNodeName(targetNode) + "\n";
+      exportNetworkTexts += linkText + "<br>";
     }
   }
-  return maxPath;
-}
 
-
-var getShortestPath = function()
-{
-  var minPath = null;
-  if (numPaths > 0) {
-    minPath = Paths[0];
-    for (var i = 1; i < Paths.length; i++) {
-      var path = Paths[i];
-      if (path.length < minPath.length) {
-        minPath = path;
-      }
-    }
-  }
-  return minPath;
-}
-
-
-function shortestPath()
-{
-  if (theFromNode == null || theToNode == null) return;
-  initializePaths();
-  pathsTo(theToNode);
-  var path = getShortestPath();
-  if (path != null) {
-    for (var i = 0; i < path.length; i++) {
-      allPathTexts += getNodeName(path[i]);
-      if (i < path.length - 1) allPathTexts += "-->";
-    }
-  }
-  clearFlags();
-}
-
-
-function longestPath()
-{
-  if (theFromNode == null || theToNode == null) return;
-  initializePaths();
-  pathsTo(theToNode);
-  var path = getLongestPath();
-  if (path != null) {
-    for (var i = 0; i < path.length; i++) {
-      allPathTexts += getNodeName(path[i]);
-      if (i < path.length - 1) allPathTexts += "-->";
-    }
-  }
-  clearFlags();
-}
-
-
-function allPaths()
-{
-  if (theFromNode == null || theToNode == null) return;
-  initializePaths();
-  pathsTo(theToNode);
-
-  for (var i = 0; i < Paths.length; i++) {
-    var path = Paths[i];
-    allPathTexts += (i+1) + ". ";
-    for (var j = 0; j < path.length; j++) {
-      allPathTexts += getNodeName(path[j]);
-      if (j < path.length - 1) allPathTexts += "-->";
-    }
-    allPathTexts +=  "<br>";
-  }
-
-  clearFlags();
-}
-
-
-function pathsTo(n)
-{
-  if (n.visited == true) {
-    return;
-  }
-
-  if (n == theFromNode) {
-    var thePath = [];
-    thePath[thePath.length] = n;
-    for (var i = traversalStack.length - 1; i >= 0; i--) {
-      var stackNode = traversalStack[i];
-      thePath[thePath.length] = stackNode;
-    }
-    Paths[numPaths] = thePath;
-    ++numPaths;
-    return;
-  }
-
-  n.visited = true;
-  traversalStack[ traversalStack.length ] = n;
-
-  for (var i = 0; i < n.fanin.length; i++) {
-    var fi = n.fanin[i];
-    pathsTo(fi);
-  }
-
-  traversalStack.length -= 1;
-}
-
-// ###############################################################################
-//  Event driven DFS based simulation
-// ###############################################################################
-
-var TimeStep = 0;        // Simulation time steps
-var LoopingLinks = [];   // Looping links found during simulation
-var hasSimulationData = false;
-
-var getLastNodeValue = function(d) 
-{
-  var val = -1;
-  if (d.Value.length > 0) {
-    val = d.Value[d.Value.length -1];
-  }
-  return val;
-}
-
-function clearSimulation()
-{
-  clearFlags();
+  exportNetworkTexts  +=  "<br>";
+  exportNetworkTexts  +=  "<br>";
+  exportNetworkTexts  +=  " NODES <br>";
+  exportNetworkTexts  +=  "<br>";
 
   for (var i = 0; i < gNodes.length; i++) {
     var n = gNodes[i];
-    n.Value = [];
+    if (n.isDisabled == true) continue;
+    exportNetworkTexts += getNodeName(n) + "<br>";
   }
-
-  TimeStep = 0;
-  delete LoopingLinks;
-  LoopingLinks = [];
-
-  hasSimulationData = false;
 }
 
 
-function initializeSimulation()
+function recomputeDegrees()
 {
-  clearFlags();
+  for (var i = 0; i < gNodes.length; i++) {
+    var n = gNodes[i];
+    n.inDegree  = 0;
+    n.outDegree = 0;
+  }
+
+  for (var i = 0; i < gLinks.length; i++) {
+    var l = gLinks[i];
+    if (l.isDisabled) continue;
+
+    var sourceNode = l.source;
+    var targetNode = l.target;
+
+    sourceNode.outDegree += 1;
+    targetNode.inDegree  += 1;
+  }
+}
+
+function identifyPrimaryInputsAndOutputs()
+{
+  delete primaryInputs;
+  primaryInputs = [];
+
+  delete primaryOutputs;
+  primaryOutputs = [];
+
+  delete TranscriptionFactors;
+  TranscriptionFactors = [];
 
   for (var i = 0; i < gNodes.length; i++) {
     var n = gNodes[i];
-    n.Value = [];
-    n.Value[ n.Value.length ] = -1;   // -1 denotes X
-  }
-
-  TimeStep = 0;
-  delete LoopingLinks;
-  LoopingLinks = [];
-}
-
-
-function outputSimulation()
-{
-  allSimulationTexts = "";
-  for (var i = 0; i < gNodes.length; i++) {
-    var n = gNodes[i];
-    var Val  = getLastNodeValue(n);
-
-    if (Val < 0) {
-      allSimulationTexts += getNodeName(n) + "   :   " + "undefined" + "<br>";
+    if (n.inDegree == 0 && n.isDisabled == false) {
+      primaryInputs[ primaryInputs.length ] = n;
     }
-    else {
-      allSimulationTexts += getNodeName(n) + "   :   " + Val + "<br>";
+    else if (n.outDegree == 0 && n.isDisabled == false) {
+      primaryOutputs[ primaryOutputs.length ] = n;
+    }
+    if (n.isTF) {
+      TranscriptionFactors[ TranscriptionFactors.length ] = n;
     }
   }
 }
 
-function performSimulation()
-{
-  initializeSimulation();
 
-  for (var i = 0; i < perturbationsNodes.length; i++) {
-    simulateForward( perturbationsNodes[i], perturbationsValues[i] );
+var getNode = function (nodeName)
+{
+  if (myKeggNodes.hasOwnProperty(nodeName)) {
+    var TheNode = gNodes[ myKeggNodes[nodeName] ];
+    return TheNode;
   }
-
-  for (var Iteration = 2; Iteration < 6; Iteration++) {
-    if (LoopingLinks.length == 0) break;
-    for (var i = 0; i < LoopingLinks.length; i++) {
-      var link = LoopingLinks[i];
-      var sourceNode = link.source;
-      var targetNode = link.target;
-      var v = sourceNode.Value[ sourceNode.Value.length - 1 ];
-      var nextVal = getNextValue(v, link, targetNode);
-      if (nextVal < 0) continue;
-      simulateForward(targetNode, nextVal);
-    }
-  }
-
-  hasSimulationData = true;
-
-  outputSimulation();
-}
-
-var isActivating = function(interactionName)
-{
-  return (interactionName == "activation"      || 
-          interactionName == "phosphorylation" || 
-          interactionName == "binding/association");
-}
-
-var isInhibiting = function(interactionName)
-{
-  return (interactionName == "inhibition"        || 
-          interactionName == "dephosphorylation" || 
-          interactionName == "dissociation");
-}
-
-var isUnset = function(v)
-{
-  return (v < 0);
-}
-
-var isSet = function(v)
-{
-  return (v >= 0);
-}
-
-var getNextValue = function(v, l, toNode)
-{
-  if (v < 0) return v;
-
-  // Check Potential conflicts
-  if (toNode.linkin.length > 1) {
-    var rtnVal = -1;
-    var conflict = false;
-    for (var i = 0; i < toNode.linkin.length; i++) {
-      var inlink = toNode.linkin[i];
-      var sourceNode = inlink.source;
-      var sourceVal  = getLastNodeValue(sourceNode);
-      var inlinkName = getInteractionName(inlink);
-
-      if (isSet(sourceVal)) {
-        if (isActivating(inlinkName)) {
-          if (isUnset(rtnVal)) rtnVal = sourceVal;
-          if (rtnVal != sourceVal) conflict = true;
-        }
-        if (isInhibiting(inlinkName)) {
-          var invertedVal = (sourceVal == 0) ? 1 : 0;
-          if (isUnset(rtnVal)) rtnVal = invertedVal;
-          if (rtnVal != invertedVal) conflict = true;
-        }
-      }
-    }
-    if (conflict) return -1;
-  }
-
-  var interactionName = getInteractionName(l);
-
-  if (interactionName == "activation")          return v;
-  if (interactionName == "inhibition")          return (v == 0) ? 1 : 0;
-  if (interactionName == "phosphorylation")     return v;
-  if (interactionName == "dephosphorylation")   return (v == 0) ? 1 : 0;
-  if (interactionName == "binding/association") return v;
-  if (interactionName == "dissociation")        return (v == 0) ? 1 : 0;
-
-  // "GErel" type (TF to targetGene: expression or repression)
-  if (interactionName == "expression")          return -1;
-  if (interactionName == "repression")          return -1; 
-
-  if (interactionName == "missing interaction") return -1;
-  if (interactionName == "unknown")             return -1;
-}
-
-
-function simulateForward(n, v)
-{
-  if (n.visited == true) return;
-
-  n.visited = true;
-
-  var prevValue = n.Value[n.Value.length - 1];
-  if (v == prevValue) return;
-
-  n.Value[ n.Value.length ] = v;
-
-  for (var i = 0; i < n.linkout.length; i++) {
-    var link = n.linkout[i];
-    var fo   = link.target;
-
-    // Feed-back or Feed-forward loop
-    if (fo.visited == true) {
-      LoopingLinks[LoopingLinks.length] = link;
-      continue;
-    }
-
-    var nextVal = getNextValue(v, link, fo);
-    if (nextVal < 0) continue;  // Simulation failed to get a value
-    simulateForward(fo, nextVal);  // Simulate recursively forward in a DFS manner
-  }
+  return null;
 }
